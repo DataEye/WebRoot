@@ -1,0 +1,16 @@
+.rloading,
+.rempty,
+.rerror{
+	padding:30px 0;
+	color:#AAAAAA;
+}
+.rloading i.fa,
+.rempty i.fa,
+.rerror i.fa{
+	font-size:50px;
+}
+.rloading div,
+.rempty div,
+.rerror div{
+	padding:10px 0;
+}

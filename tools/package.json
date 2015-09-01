@@ -1,0 +1,17 @@
+{
+  "author": "simonxu <simon@dataeye.com>",
+  "description": "前端构建脚本（基于requirejs）",
+  "scripts": {
+    "start": "node core",
+    "sync": "node core/dev_template.js sync",
+    "i18n": "node core/check_i18n.js"
+  },
+  "dependencies": {
+    "bluebird": "^2.9.9",
+    "chokidar": "*",
+    "glob": "^4.3.5",
+    "lodash": "^3.2.0",
+    "properties": "^1.2.1",
+    "requirejs": "^2.1.18"
+  }
+}

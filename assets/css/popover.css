@@ -1,0 +1,28 @@
+.popover{
+	min-width:500px;
+	padding:0;
+	left:-25px!important;
+	border-radius: 4px;
+  	-webkit-box-shadow: 0 0 10px rgba(0,0,0,0.15);
+	box-shadow: 0 0 10px rgba(0,0,0,0.15);
+	font-family:Arial, "微软雅黑", "宋体";
+}
+.popover-title{
+	background-color:#f7f7f7;
+	font-weight:bold;
+}
+.popover.bottom > .arrow{
+	left:32px!important;
+}
+.popover.bottom > .arrow:after{
+	border-bottom-color:#f7f7f7;
+}
+.table-list{
+	width:100%;
+	margin:5px 0;
+	font-size:13px;
+}
+.table-list td{
+	padding:5px;
+	border-bottom:1px solid #ebebeb;
+}

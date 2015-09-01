@@ -1,0 +1,115 @@
+.model-chart{
+	clear:both;
+	height:auto;
+	min-height:240px;
+}
+.model-zoom .model-chart{
+	height:400px;
+}
+h5.tip-title{
+	margin:0;
+	padding-bottom:5px;
+	height:20px;
+	line-height:20px;
+	border-bottom:rgba(4, 5, 7, 0.1) 1px solid;
+	font-size:12px;
+	font-family:Arial, "微软雅黑", "宋体";
+}
+.tip-content{
+	font-size:12px;
+	font-family:Arial, "微软雅黑", "宋体";
+}
+.tip-content-1{
+	min-width:200px;
+}
+.tip-content-2{
+	min-width:400px;
+}
+.tip-content-3{
+	min-width:600px;
+}
+.tip-content-4{
+	min-width:800px;
+}
+.tip-content-5{
+	min-width:1000px;
+}
+.tip-content-6{
+	min-width:1200px;
+}
+.tip-content-7{
+	min-width:1400px;
+}
+.tip-content-8{
+	min-width:1600px;
+}
+.tip-content-9{
+	min-width:1800px;
+}
+.tip-content-10{
+	min-width:2000px;
+}
+.tip-content-11{
+	min-width:2200px;
+}
+.tip-content-12{
+	min-width:2400px;
+}
+.tip-content-13{
+	min-width:2600px;
+}
+.tip-content-14{
+	min-width:2800px;
+}
+.tip-content-15{
+	min-width:3000px;
+}
+.tip-content-16{
+	min-width:3200px;
+}
+.tip-content-17{
+	min-width:3400px;
+}
+.tip-content-18{
+	min-width:3600px;
+}
+.tip-content-19{
+	min-width:3800px;
+}
+.tip-content-20{
+	min-width:4000px;
+}
+.tip-content .tip-list{
+	padding-left:20px;
+}
+.tip-content .tip-list:first-child{
+	padding-left:0;
+}
+.tip-list{
+	float:left;
+	width: 200px;
+	margin:0;
+	padding: 5px 15px 0 0;
+	line-height:20px;
+	border-top:1px solid rgba(122, 128, 138, 0.2);
+	list-style:none;
+}
+.areaspline,.spline,.column,.empty{
+	display: inline-block;
+	width:15px;
+	height:12px;
+	margin:0 10px 0 0;
+	overflow:hidden;
+	vertical-align: middle;
+	font-size:0;
+}
+.scatter{
+	display: inline-block;
+	width:12px;
+	height:12px;
+	margin:0 13px 0 0;
+	overflow:hidden;
+	vertical-align: middle;
+	font-size:0;
+	border-radius:100px;
+}

@@ -1,0 +1,44 @@
+.icon{
+	float:left;
+	width:32px;
+	height:32px;
+	background:url(../img/icon.png?v=1) no-repeat left top;
+	overflow:hidden;
+	font-size:0;
+	text-indent:-99999px;
+}
+.sidemenu h3.current .icon{
+	background-image:url(../img/icon-hover.png?v=2);
+}
+/*实时*/
+.icon-realtime{
+	background-position:0 0;
+}
+/*玩家分析*/
+.icon-player{
+	background-position:0 -32px;
+}
+/*付费分析*/
+.icon-pay{
+	background-position:0 -64px;
+}
+/*在线分析*/
+.icon-online{
+	background-position:0 -96px;
+}
+/*渠道分析*/
+.icon-channel{
+	background-position:0 -128px;
+}
+/*配置管理*/
+.icon-setting{
+	background-position:0 -160px;
+}
+/*用户权限*/
+.icon-user-qx{
+	background-position:0 -256px;
+}
+/*用户管理*/
+.icon-user-gl{
+	background-position:0 -288px;
+}

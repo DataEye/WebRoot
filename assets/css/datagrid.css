@@ -1,0 +1,45 @@
+.rwrapper {
+	position: relative;
+	margin-bottom:10px;
+}
+
+.rwrapper.fixed-cols {
+	overflow: hidden;
+}
+
+.rwrapper td {
+	white-space: nowrap;
+}
+
+.rwrapper td.break-line{
+	word-break:break-all;
+	white-space:pre-wrap;
+}
+
+.rleftcols {
+	position: absolute;
+	top:0;
+	left: 0;
+}
+
+.rrightcols {
+	position: absolute;
+	top:0;
+	right: 0;
+}
+
+.rleftcols thead, .rrightcols thead, .rleftcols tfoot, .rrightcols tfoot, .rleftcols tbody, .rrightcols tbody{
+	background-color: #FFF;
+}
+
+.rleftcols td, .rleftcols th, .rrightcols td, .rrightcols th {
+	display: none;
+}
+
+.rcols {
+	width: 100%;
+}
+
+.rcols.fixed-cols {
+	overflow-x: auto;
+}

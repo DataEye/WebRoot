@@ -1,0 +1,167 @@
+textarea{
+	resize: none;
+}
+.de-text-box {
+	border: #d8d8d8 2px solid;
+	border-radius: 3px;
+	width: 100%;
+	height: 30px;
+	position: relative;
+	margin: 0;
+	padding: 3px 10px;
+	display: inline-block;
+}
+.de-text-label {
+	position: absolute;
+	display: block;
+	color:#818181;
+	pointer-events: none;
+	z-index: 2;
+}
+
+.de-text-input {
+	outline: none;
+	position: absolute;
+	padding: 0 10px;
+	width: 100%;
+	height: 26px;
+	left: 0;
+	top: 0;
+	border: 0;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+}
+
+.de-text-tips {
+	padding: 0 10px;
+	position: absolute;
+	left: auto;
+	right: 0;
+	top: auto;
+	bottom: -5px;
+	background: #e25856;
+	border-radius: 3px;
+	color: #fff;
+	font-size: 12px;
+	zoom: 1;
+}
+
+.de-text-tips:before {
+	content: "";
+	position: absolute;
+	left: auto;
+	top: -8px;
+	right: 20px;
+	font-size: 0;
+	overflow: hidden;
+	width: 0;
+	height: 0;
+	border: 4px #fff solid;
+	border-bottom: 4px #e25856 solid;
+}
+
+
+/* 提示文字过多时，放在右侧 */
+.de-text-tips.right {
+
+}
+
+.de-text-tips.right:before {
+
+}
+
+/* 聚焦时的边框颜色 */
+.de-text-box-focus {
+	border-width: 2px;
+	border-color: #336699;
+	-webkit-box-shadow: 0 0 5px rgba(59, 89, 157, .35);
+	box-shadow: 0 0 5px rgba(59, 89, 157, .35);
+}
+
+.de-text-box-invalid {
+	border-width: 2px;
+	border-color: #e25856;
+}
+
+.de-text-box-valid {
+	border-width: 2px;
+	border-color: #d8d8d8;
+}
+.de-text-box-focus.de-text-box-valid{
+	border-color: #009900;
+}
+
+.form-group-big .de-text-box{
+	height:46px;
+}
+.form-group-big .de-text-input{
+	height:42px;
+}
+.form-group-big .de-text-label{
+	top:12px;
+}
+
+.form-group-big .de-text-box-focus .de-text-input,
+.form-group-big .de-text-box-invalid .de-text-input,
+.form-group-big .de-text-box-valid .de-text-input{
+	height:42px;
+}
+
+.text-md,
+.form-group-md{
+	margin-bottom:5px;
+}
+.text-md .de-text-box,
+.form-group-md .de-text-box{
+	height:40px;
+}
+.text-md .de-text-input,
+.form-group-md .de-text-input{
+	height:36px;
+}
+.form-group-md .de-text-label{
+	top:8px;
+}
+.text-md .de-text-box-focus,
+.text-md .de-text-box-invalid,
+.text-md .de-text-box-valid,
+.form-group-md .de-text-box-focus,
+.form-group-md .de-text-box-invalid,
+.form-group-md .de-text-box-valid{
+	border-width: 2px;
+}
+.text-md .de-text-box-focus .de-text-input,
+.text-md .de-text-box-invalid .de-text-input,
+.text-md .de-text-box-valid .de-text-input,
+.form-group-md .de-text-box-focus .de-text-input,
+.form-group-md .de-text-box-invalid .de-text-input,
+.form-group-md .de-text-box-valid .de-text-input{
+	height:36px;
+}
+
+.text-xs .de-text-box{
+	height:25px;
+	border-width: 1px;
+}
+.text-xs .de-text-box .de-text-input{
+	padding:0 5px;
+	height:23px;
+}
+.text-xs .de-text-box-focus,
+.text-xs .de-text-box-invalid,
+.text-xs .de-text-box-valid{
+	border-width: 1px;
+}
+.text-xs .de-text-box-focus .de-text-input,
+.text-xs .de-text-box-invalid .de-text-input,
+.text-xs .de-text-box-valid .de-text-input{
+	height:23px;
+}
+
+.checkbox .font12{
+	line-height:20px;
+}
+.horizontal-dialog .form-group{
+	margin:10px 15px;
+}
+

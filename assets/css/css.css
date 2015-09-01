@@ -1,0 +1,299 @@
+@charset "utf-8";
+/*::-webkit-scrollbar
+{
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track-piece
+{
+    background-color: #FFFFFF;
+}
+::-webkit-scrollbar-thumb:vertical
+{
+    height: 5px;
+    background-color: rgba(0, 0, 0, 0.1);
+    -webkit-border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:horizontal
+{
+    width: 5px;
+    background-color: #FFFFFF;
+}
+*/
+a:hover, a:focus{
+	text-decoration:none;
+}
+/*body{
+	overflow-y:scroll;
+}*/
+body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
+	font-family:Arial, "微软雅黑", "宋体";
+}
+.row{
+	margin:10px 0;
+}
+.split{
+	width:1px;
+	background-color:#FDFEFF;
+	border-left:#C8CEDA 1px solid;
+	overflow:hidden;
+}
+.de-top{
+	line-height:30px;
+	padding:20px 30px 10px 30px;
+}
+.wrapper{
+	margin:15px 30px 0 30px;
+	padding:50px 0;
+	min-height:500px;
+	background-color:#FFFFFF;
+	border:1px solid #CCCCCC;
+}
+.wrapper-center{
+	padding:0;
+	border-width:0;
+}
+.wrapper-top{
+	padding:30px 0;
+}
+.wrapper-content{
+	width:900px;
+	margin:0 auto;
+}
+.wrapper-body{
+	padding:0 5px;
+}
+.wrapper-body-text{
+	padding:20px 0;
+}
+.wrapper-body-center{
+	margin:100px 0;
+}
+
+.content-default{
+	padding:15px;
+}
+
+/* 筛选条件 */
+.select-result{
+	position: relative;
+	padding: 6px 0 6px 50px;
+	height: auto !important;
+	min-height: 20px;
+	height: 20px;
+}
+.select-result-title{
+	line-height: 30px;
+	position: absolute;
+	left: 0;
+	top: 5px;
+	width: 50px;
+}
+.result .btn{
+	margin-right: 5px;
+}
+.filter-content{
+	padding-top:15px;
+	height:auto;
+	min-height:200px;
+}
+.result{margin:15px 0 0 0;}
+
+
+
+
+
+
+
+
+.content-head-top{
+	margin-top:10px;
+	padding:10px 0;
+	border-top:1px solid #EAEAEA;
+}
+
+span.tips{
+	font-size:12px;
+	color:#999999;
+}
+#footer{
+	margin-top:-1px;
+	padding:15px 0;
+	text-align:center;
+	border-top:#D6DAE2 1px solid;
+}
+.unique-form {
+	width: 430px;
+	padding: 15px 0;
+	margin: 20px auto 50px auto;
+	border: 1px solid #D1D1D1;
+	background: #FFF;
+	box-shadow: 0 5px 8px rgba(0,0,0,.15);
+}
+.unique-form .form-group{
+	margin-left:50px;
+	margin-right:50px;
+}
+.unique-form legend{
+	padding:0 50px;
+	line-height:50px;
+}
+.de-breadcrumb{
+	margin:0 30px;
+	padding:10px 0 0 0;
+	background-color:transparent;
+}
+.de-narrow-form{
+	width: 420px;
+	margin:0 auto;
+	padding:80px 0;
+}
+.de-wide-form{
+	padding:30px 50px;
+}
+.form-group-submit{
+	margin:80px auto 30px 20px;
+}
+.de-well{
+	padding:8px 10px;
+	margin:0;
+}
+.de-divider{
+	height: 1px;
+	margin: 30px 0;
+	overflow: hidden;
+	background-color: #e5e5e5;
+}
+.existed-item {
+	color: red;
+}
+
+.col-box{
+	margin:0 5px 20px 5px;
+}
+.col-head{
+}
+.col-head-end{
+	background:none;
+}
+.col-head h3{
+	font-size:22px;
+	font-weight:normal;
+	font-family:"微软雅黑";
+}
+.col-head p{
+	color:#717171;
+	margin-top:-5px;
+}
+.scene-box{
+	height:auto!important;
+	min-height:80px;
+	height:80px;
+	padding:5px 10px;
+	margin:5px 0;
+	border:#C2D4E2 1px solid;
+	background:#E9F3FF;
+	cursor: pointer;
+}
+.scene-box-tips{
+	height:auto!important;
+	min-height:80px;
+	height:80px;
+	padding:5px 10px 22px 10px;
+	margin:5px 0;
+	border:#DDDDDD 1px solid;
+	background:#EEEEEE;
+	color:#666666;
+}
+.scene-box h5,
+.scene-box-tips h5{
+	margin:3px 0;
+	padding:0;
+	font-size:15px;
+	font-weight:bold;
+}
+.scene-box p,
+.scene-box-tips p{
+	margin:0;
+	padding:0;
+	font-size:12px;
+}
+.scene-box.current{
+	border:#256CBC 1px solid;
+	background:#3B599D;
+	color:#FFFFFF;
+}
+
+/* btn自定义样式 */
+.btn-custom-lose,
+.btn-custom-lose:hover,
+.btn-custom-lose:focus{	
+	height:60px;
+	line-height:52px;
+	background-color:#FFB83C;
+	border-color:#E78232;
+	-moz-box-shadow: 0px 1px 0px #FFD956 inset, 0px 1px 0px #FFFFFF;
+	-webkit-box-shadow: 0px 1px 0px #FFD956 inset, 0px 1px 0px #FFFFFF;
+	box-shadow: 0px 1px 0px #FFD956 inset, 0px 1px 0px #FFFFFF;
+	border-radius: 5px;
+	font-size:18px;
+	text-shadow: 0px 1px 0px #E88331;
+}
+.btn-custom-lose .split{
+	margin: 0 10px;
+	width: 2px;
+	height: 52px;
+	background-color: #FFB981;
+	border-left-color: #E88331;
+}
+.btn-custom-lose .value{
+	color:#623305;
+	text-shadow: 0px 1px 0px #FFD48B;
+	font-family: Arial;
+	font-size: 22px;
+}
+
+/* slider自定义样式 */
+.slider {
+	margin-top: 20px;
+	height:18px;
+}
+.slider-lose>.track-lose, 
+.slider-lose>.highlight-track-lose{
+	margin-top:-5px;
+	height:10px;
+	background: #BAC1CB;
+	background: -webkit-linear-gradient(top,#bbb,#BAC1CB);
+	background: -moz-linear-gradient(top,#bbb,#BAC1CB);
+	background: linear-gradient(top,#bbb,#BAC1CB);
+}
+.slider-lose>.highlight-track-lose{
+	background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+	background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+	background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+	-webkit-background-size: 40px 40px;
+	background-size: 40px 40px;
+	background-color: #f0ad4e;
+	border:none;
+	border-top-right-radius:0;
+	border-bottom-right-radius:0;
+}
+.slider-lose>.dragger-lose{
+	width:18px;
+	height:18px;
+	background: #FFFFFF;
+	background-image: -ms-linear-gradient(top, #FFFFFF, #F5F5F5);
+	background-image: -moz-linear-gradient(top, #FFFFFF, #F5F5F5);
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFFFFF), color-stop(1, #F5F5F5));
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F5F5F5', GradientType='0');
+	border-color: #CCCCCC;
+}
+.slider-lose>.dragger-lose:hover{
+	background: #FFFFFF;
+	background-image: -ms-linear-gradient(top, #FFFFFF, #F5F5F5);
+	background-image: -moz-linear-gradient(top, #FFFFFF, #F5F5F5);
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFFFFF), color-stop(1, #F5F5F5));
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F5F5F5', GradientType='0');
+	border-color: #CCCCCC;
+}
+

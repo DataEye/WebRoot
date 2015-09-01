@@ -25,3 +25,12 @@ build/Release
 # Dependency directory
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
+
+# 打包之后的资源文件
+assets-build
+
+#
+.settings
+.idea
+.metadata
+.svn
