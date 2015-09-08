@@ -163,7 +163,7 @@ define([
 		//保存一份原始数据
 		app.set('json', json)
 		app.set('datasource', json.content)
-		
+
 		// 页面跳转
 		app.off('pager.goto').on('pager.goto', function(e) {
 			var pageid = pager.get('pageid')
@@ -232,12 +232,12 @@ define([
 			var pagerOptions = ['pageid', 'width', 'sizes', 'pagesize']
 			$.each(pagerOptions, function(i, field){
 				options[field] && pager.set(field, options[field])
-			})			
+			})
 
 			// 固定列配置
 			options.leftColumns = $.isNumeric(options.leftColumns) && options.leftColumns > 0 ? options.leftColumns : 0
 			options.rightColumns = $.isNumeric(options.rightColumns) && options.rightColumns > 0 ? options.rightColumns : 0
-	
+
 			// ajax配置
 			if (options.ajaxUrl) {
 				var errorHandler = onAjaxError(app)
@@ -333,9 +333,11 @@ define([
 					var options = app.get('options')
 					// 前端分页
 					var data = getParams(options.params, pageid || options.pageid, options.pagesize || 10)
+					app.set('isLoading', !!app.get('datasource'))
+					$.post(options.ajaxUrl, data).then(function onSuccess(json) {
+						app.set('ajaxError', null)
+						app.set('isLoading', null)
 
-					$.post(options.ajaxUrl, data).then(function onSuccess(json) {					
-						app.set('ajaxError', null)						
 						renderClientPagination(app, pager, json)
 
 						AsyncRender.done(app, callback, [null, json])

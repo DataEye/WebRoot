@@ -7,6 +7,22 @@
 	background:rgba(0, 0, 0, 0.8);
 	z-index:100;
 }
+.mask-loading{
+	position:absolute;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	background:rgba(255, 255, 255, 0.5);
+	z-index:100;
+}
+.mask-loading .rloading{
+	position: absolute;
+	width:100%;
+	height:90px;
+	top:50%;
+	margin-top:-50px;
+}
 .model-dialog{
 	position: absolute;
 	left:50%;

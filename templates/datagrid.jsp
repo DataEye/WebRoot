@@ -12,6 +12,15 @@
 			</div>
 		{{else}}
 			{{#if datalist}}
+				{{#if isLoading}}
+				<div class="mask-loading">
+					<div class="rloading text-center">
+						<i class="fa fa-spinner fa-pulse"></i>
+						<div>正在加载，请稍候...</div>
+					</div>
+				</div>
+				{{/if}}
+				
 				{{#if options.leftColumns}}
 				<div class="rleftcols">
 					{{>content}}
