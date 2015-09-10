@@ -1,0 +1,33 @@
+<button on-click="{{loading ? '' : 'request'}}" type="{{type || 'button'}}"
+  class="{{className}}" disabled="{{loading}}">
+{{#if loading}}
+  {{loadingText}}
+{{else}}
+  {{text}}
+{{/if}}
+</button>
+
+<script>
+  // test 测试
+  var $ = require('jquery');
+  component.exports = {
+    onrender: function () {
+      var self = this;
+      this.on('request', function (e) {
+        this.set('loading', true);
+
+        var data = this.get();
+        var url = $.isFunction(data.url) ? data.url() : data.url;
+        var formData = $.isFunction(data.data) ? data.data() : data.data;
+
+        $.post(url, formData).then(function () {
+          self.fire('success', e, arguments)
+        }).fail(function () {
+          self.fire('error', e, arguments)
+        }).always(function () {
+          self.set('loading', false)
+        })
+      })
+    }
+  }
+</script>
