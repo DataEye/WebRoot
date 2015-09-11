@@ -7,8 +7,7 @@
     "i18n": "node core/check_i18n.js"
   },
   "dependencies": {
-    "bluebird": "^2.9.9",
-    "chokidar": "*",
+    "amd-optimize": "^0.6.0",
     "glob": "^4.3.5",
     "gulp": "^3.9.0",
     "gulp-rename": "^1.2.2",
