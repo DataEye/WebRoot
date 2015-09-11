@@ -6,13 +6,13 @@ DataEye内部Java项目前端模板
 
 静态资源目录，包含:
 
-> * component: Ractive组件
+> * components: Ractive组件(html)
 > * css
 > * fonts (font-awsome & bootstrap)
 > * img 
 > * js 
 
-### assets/component
+### assets/components
 
 single file components，最终会被转换为js文件。
 
