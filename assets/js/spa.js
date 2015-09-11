@@ -4,7 +4,7 @@
  *
  * 引入utils是因为$.abortAll在utils里面
  */
-define(['jquery', 'router', 'query-string', 'utils'], function($, Router, queryString, utils) {
+define(['jquery', 'router', 'query-string', 'utils'], function($, Router, queryString) {
 	/**
 	 * 查询字符串解析到params上（不包含hash）
 	 */
