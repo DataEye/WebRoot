@@ -2,7 +2,7 @@
   "author": "simonxu <simon@dataeye.com>",
   "description": "前端构建脚本（基于requirejs）",
   "scripts": {
-    "start": "node core",
+    "start": "npm gulp",
     "sync": "node core/dev_template.js sync",
     "i18n": "node core/check_i18n.js"
   },
@@ -10,6 +10,9 @@
     "bluebird": "^2.9.9",
     "chokidar": "*",
     "glob": "^4.3.5",
+    "gulp": "^3.9.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-trac": "0.0.1",
     "lodash": "^3.2.0",
     "properties": "^1.2.1",
     "requirejs": "^2.1.18"
