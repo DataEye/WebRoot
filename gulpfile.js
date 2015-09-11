@@ -72,20 +72,17 @@ var app = {
   exclude: coreBase.include.concat(appBase.include)
 }
 
-gulp.task('core-base', function() {
-  rjs(_.extend({}, baseConfig, coreBase)).pipe(gulp.dest('.'))
-})
+var scriptTask = {
+  coreBase,
+  appBase,
+  charts,
+  app
+}
 
-gulp.task('app-base', function() {
-  rjs(_.extend({}, baseConfig, appBase)).pipe(gulp.dest('.'))
-})
-
-gulp.task('charts', function() {
-  rjs(_.extend({}, baseConfig, charts)).pipe(gulp.dest('.'))
-})
-
-gulp.task('app', function() {
-  rjs(_.extend({}, baseConfig, app)).pipe(gulp.dest('.'))
+_.each(scriptTask, function(val, task) {
+  gulp.task(task, function() {
+    rjs(_.extend({}, baseConfig, val)).pipe(gulp.dest('.'))
+  })
 })
 
 gulp.task('transformSingleFileComponent', function() {
@@ -95,6 +92,6 @@ gulp.task('transformSingleFileComponent', function() {
     .pipe(gulp.dest('assets/js/components/'))
 })
 
-gulp.task('default', ['core-base', 'app-base', 'app', 'charts'], function() {
+gulp.task('default', _.keys(scriptTask), function() {
 
 })
