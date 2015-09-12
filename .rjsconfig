@@ -101,28 +101,15 @@
       include: [
         'spa',
         'utils',
-        'oss'
-      ],
-      exclude: [
-        'core-base'
-      ]
-    },
-    {
-      // 组件库
-      name: 'components',
-      create: true,
-      include: [
+        'oss',
         'bootstrap/colorpicker',
         'bootstrap/popover',
         'bootstrap/timepicker',
         'bootstrap/tooltip',
         'components/ajax-button'
-        // TODO 补齐其它组件
       ],
-      // 排除依赖脚本
       exclude: [
-        'core-base',
-        'app-base'
+        'core-base'
       ]
     },
     // TODO 国际化
