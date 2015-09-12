@@ -6,6 +6,17 @@ var hasher = require('gulp-hasher')
 var fs = require('fs')
 var _ = require('lodash')
 
+var jsAppModules = fs.readdirSync('assets/js/app')
+var jsComponentsModules = fs.readdirSync('assets/js/components')
+
+jsAppModules = _.map(jsAppModules, function(item) {
+  return 'app/' + item.replace('.js', '')
+})
+
+jsComponentsModules = _.map(jsComponentsModules, function(item) {
+  return 'components/' + item.replace('.js', '')
+})
+
 /**
  * r.js资源优化配置文件
  * 参考 https://github.com/simongfxu/requirejs-example-gulpfile/blob/master/gulpfile.js
@@ -41,13 +52,12 @@ var config = {
 
   // build预处理，暂未使用
   onBuildRead: function (moduleName, path, contents) {
-    console.log(`正处理:${path}`)
-
     return contents
   },
 
   // build预处理，暂未使用
   onBuildWrite: function (moduleName, path, contents) {
+    console.log(`正处理:${path}`)
     return contents
   },
 
@@ -104,20 +114,14 @@ var config = {
     },
     {
       // 业务辅助类
+      // TODO 国际化
       name: 'app-base',
       create: true,
       include: [
         'spa',
         'utils',
-        'oss',
-        'bootstrap/colorpicker',
-        'bootstrap/popover',
-        'bootstrap/timepicker',
-        'bootstrap/tooltip',
-        'components/ajax-button'
-        // TODO 补齐其它组件
-        // TODO 国际化
-      ],
+        'oss'
+      ].concat(jsComponentsModules),
       exclude: [
         'core-base'
       ]
@@ -135,13 +139,11 @@ var config = {
       ]
     },
     {
-      // TODO 补齐其它业务脚本；需要国际化
+      // 业务类
+      // TODO 需要国际化
       name: 'app',
       create: true,
-      include: [
-        'app/main',
-        'app/sample'
-      ],
+      include: jsAppModules,
       exclude: [
         'core-base',
         'app-base'
