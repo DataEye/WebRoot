@@ -5,6 +5,8 @@ var rjs = require('gulp-requirejs')
 var minifyCss = require('gulp-minify-css')
 var concatCss = require('gulp-concat-css')
 var uglify = require('gulp-uglify')
+var hasher = require('gulp-hasher')
+var fs = require('fs')
 var _ = require('lodash')
 
 // 基础配置，gulp-requirejs limitation
@@ -96,6 +98,7 @@ _.each(scriptTaskNames, function(task) {
   gulp.task(`script:${name}`, deps, function() {
     return rjs(_.extend({}, baseConfig, scriptTask[name]))
       .pipe(uglify())
+      .pipe(hasher())
       .pipe(gulp.dest('.'))
   })
 })
@@ -117,6 +120,7 @@ gulp.task('css:core', function() {
   return gulp.src('assets/css/core.css')
     .pipe(concatCss("assets-build/css/core.css"))
     .pipe(minifyCss())
+    .pipe(hasher())
     .pipe(gulp.dest('.'))
 })
 
@@ -127,6 +131,7 @@ gulp.task('css:combined', function() {
   return gulp.src('assets/css/combined.css')
     .pipe(concatCss("assets-build/css/combined.css"))
     .pipe(minifyCss())
+    .pipe(hasher())
     .pipe(gulp.dest('.'))
 })
 
@@ -140,4 +145,14 @@ gulp.task('image', function() {
     .pipe(gulp.dest('assets-build/img'))
 })
 
-gulp.task('default', ['css:combined', 'css:core', 'fonts', 'image'].concat(scriptTaskNames))
+gulp.task('default', ['css:combined', 'css:core', 'fonts', 'image'].concat(scriptTaskNames), function() {
+  console.log(123)
+  var hashes = hasher.hashes
+  var manifest = {}
+  _.each(hashes, function(key, filepath) {
+    filepath = filepath.replace(/\\/g, '/').split('assets-build')[1]
+    manifest[filepath] = key.slice(0, 4) + key.slice(-4)
+  })
+
+  console.log(manifest)
+})
