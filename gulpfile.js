@@ -2,6 +2,9 @@ var gulp = require('gulp')
 var trac = require('gulp-trac')
 var rename = require('gulp-rename')
 var rjs = require('gulp-requirejs')
+var minifyCss = require('gulp-minify-css')
+var concatCss = require('gulp-concat-css')
+var uglify = require('gulp-uglify')
 var _ = require('lodash')
 
 // 基础配置，gulp-requirejs limitation
@@ -49,7 +52,8 @@ var appBase = {
   include: [
     'spa',
     'utils',
-    'oss'
+    'oss',
+    'components/ajax-button'
   ],
   exclude: coreBase.include
 }
@@ -79,19 +83,61 @@ var scriptTask = {
   app
 }
 
-_.each(scriptTask, function(val, task) {
-  gulp.task(task, function() {
-    rjs(_.extend({}, baseConfig, val)).pipe(gulp.dest('.'))
+/**
+ * AMD脚本优化
+ */
+var scriptTaskNames = _.keys(scriptTask).map(function(x) {
+  return `script:${x}`
+})
+_.each(scriptTaskNames, function(task) {
+  var name = task.split(':')[1]
+  // app.js需要依赖于组件转换任务
+  var deps = name === 'app-base' ? 'pre:transform' : []
+  gulp.task(`script:${name}`, deps, function() {
+    return rjs(_.extend({}, baseConfig, scriptTask[name]))
+      .pipe(uglify())
+      .pipe(gulp.dest('.'))
   })
 })
 
-gulp.task('transformSingleFileComponent', function() {
+/**
+ * 转换single file components为js文件
+ */
+gulp.task('pre:transform', function() {
   return gulp.src('assets/components/*.html')
     .pipe(trac({moduleFormat: 'amd'}))
     .pipe(rename(function(filename) {filename.extname = '.js'}))
     .pipe(gulp.dest('assets/js/components/'))
 })
 
-gulp.task('default', _.keys(scriptTask), function() {
-
+/**
+ * 打包压缩core.css
+ */
+gulp.task('css:core', function() {
+  return gulp.src('assets/css/core.css')
+    .pipe(concatCss("assets-build/css/core.css"))
+    .pipe(minifyCss())
+    .pipe(gulp.dest('.'))
 })
+
+/**
+ * 打包压缩combined.css
+ */
+gulp.task('css:combined', function() {
+  return gulp.src('assets/css/combined.css')
+    .pipe(concatCss("assets-build/css/combined.css"))
+    .pipe(minifyCss())
+    .pipe(gulp.dest('.'))
+})
+
+gulp.task('fonts', function() {
+  return gulp.src('assets/fonts/*.*')
+    .pipe(gulp.dest('assets-build/fonts'))
+})
+
+gulp.task('image', function() {
+  return gulp.src('assets/img/*.*')
+    .pipe(gulp.dest('assets-build/img'))
+})
+
+gulp.task('default', ['css:combined', 'css:core', 'fonts', 'image'].concat(scriptTaskNames))

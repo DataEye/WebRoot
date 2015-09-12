@@ -13,10 +13,10 @@
   // 开发脚本目录
   baseUrl: 'js',
 
-  // 是否优化css，standand/none
+  // 是否优化css，standard/none
   optimizeCss: "standard",
 
-  // 是否生成sourcemap
+  // 是否生成source map
   // see http://requirejs.org/docs/optimization.html#sourcemaps
   generateSourceMaps: true,
 
