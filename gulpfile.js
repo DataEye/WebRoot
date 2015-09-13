@@ -1,10 +1,17 @@
 var gulp = require('gulp')
+var gutil = require('gulp-util')
 var trac = require('gulp-trac')
 var rename = require('gulp-rename')
 var requirejs = require('requirejs')
 var hasher = require('gulp-hasher')
 var fs = require('fs')
 var _ = require('lodash')
+var properties = require ("properties")
+var stream = require('stream')
+var bluebird = require('bluebird')
+
+var parseAsync = bluebird.promisify(properties.parse, properties)
+bluebird.promisifyAll(fs)
 
 var jsAppModules = fs.readdirSync('assets/js/app')
 var jsComponentsModules = fs.readdirSync('assets/js/components')
@@ -16,6 +23,15 @@ jsAppModules = _.map(jsAppModules, function(item) {
 jsComponentsModules = _.map(jsComponentsModules, function(item) {
   return 'components/' + item.replace('.js', '')
 })
+
+function getStream(filename, string) {
+  var src = stream.Readable({ objectMode: true })
+  src._read = function () {
+    this.push(new gutil.File({ cwd: "", base: "", path: filename, contents: new Buffer(string) }))
+    this.push(null)
+  }
+  return src
+}
 
 /**
  * r.js资源优化配置文件
@@ -171,15 +187,51 @@ gulp.task('optimize:r.js', ['pre:transform'], function(callback) {
   })
 })
 
+gulp.task('i18n', function() {
+
+})
+
 /**
  * 读取manifest文件信息
  */
-gulp.task('manifest', ['optimize:r.js'], function() {
+gulp.task('hasher', ['optimize:r.js'], function() {
   return gulp.src(['assets-build/js/*.js', 'assets-build/css/*.css'])
     .pipe(hasher())
 })
 
-gulp.task('default', ['manifest'], function() {
+gulp.task('i18n', function() {
+  var locales = ['cn.properties', 'en.properties', 'tw.properties']
+  var dict
+  return bluebird.map(locales, function(name) {
+    return parseAsync('src/resource/' + name, {path: true})
+  }).spread(function(cn, en, tw) {
+    dict = {
+      cn: _.invert(cn),
+      en,
+      tw
+    }
+
+    return bluebird.all([
+      fs.readFileAsync('assets-build/js/app.js', 'utf8'),
+      fs.readFileAsync('assets-build/js/app-base.js', 'utf8'),
+    ])
+  }).spread(function(app, appBase) {
+    function translate(str, lang) {
+      return str.replace(/([\u3400-\u9FBF]+)/g, function(all, match) {
+        return dict[lang][dict.cn[match]] || match
+      })
+    }
+
+    return Promise.all([
+      fs.writeFileAsync('assets-build/js/app-en.js', translate(app, 'en')),
+      fs.writeFileAsync('assets-build/js/app-tw.js', translate(app, 'tw')),
+      fs.writeFileAsync('assets-build/js/app-base-en.js', translate(appBase, 'en')),
+      fs.writeFileAsync('assets-build/js/app-base-tw.js', translate(appBase, 'tw'))
+    ])
+  })
+})
+
+gulp.task('manifest', ['hasher'], function(next) {
   var hashes = hasher.hashes
   var manifest = {}
   _.each(hashes, function(key, filepath) {
@@ -187,5 +239,7 @@ gulp.task('default', ['manifest'], function() {
     manifest[filepath] = key.slice(0, 4) + key.slice(-4)
   })
 
-  fs.writeFileSync('assets-build/manifest.json', JSON.stringify(manifest, null, '  '))
+  fs.writeFile('assets-build/manifest.json', JSON.stringify(manifest, null, '  '), next)
 })
+
+gulp.task('default', ['i18n'])
