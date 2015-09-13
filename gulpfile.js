@@ -2,15 +2,15 @@ var gulp = require('gulp')
 var gutil = require('gulp-util')
 var trac = require('gulp-trac')
 var rename = require('gulp-rename')
-var requirejs = require('requirejs')
 var hasher = require('gulp-hasher')
+var i18n = require('gulp-lazy-i18n')
+var requirejs = require('requirejs')
 var fs = require('fs')
 var _ = require('lodash')
 var properties = require ("properties")
 var stream = require('stream')
 var bluebird = require('bluebird')
 
-var parseAsync = bluebird.promisify(properties.parse, properties)
 bluebird.promisifyAll(fs)
 
 var jsAppModules = fs.readdirSync('assets/js/app')
@@ -199,36 +199,28 @@ gulp.task('hasher', ['optimize:r.js'], function() {
     .pipe(hasher())
 })
 
+/**
+ * 国际化直接替换中文资源
+ */
 gulp.task('i18n', function() {
-  var locales = ['cn.properties', 'en.properties', 'tw.properties']
-  var dict
-  return bluebird.map(locales, function(name) {
-    return parseAsync('src/resource/' + name, {path: true})
-  }).spread(function(cn, en, tw) {
-    dict = {
-      cn: _.invert(cn),
-      en,
-      tw
-    }
+  var dict = {
+    cn: _.invert(properties.parse(fs.readFileSync('src/resource/cn.properties', 'utf8'))),
+    en: properties.parse(fs.readFileSync('src/resource/en.properties', 'utf8')),
+    tw: properties.parse(fs.readFileSync('src/resource/tw.properties', 'utf8'))
+  }
 
-    return bluebird.all([
-      fs.readFileAsync('assets-build/js/app.js', 'utf8'),
-      fs.readFileAsync('assets-build/js/app-base.js', 'utf8'),
-    ])
-  }).spread(function(app, appBase) {
-    function translate(str, lang) {
-      return str.replace(/([\u3400-\u9FBF]+)/g, function(all, match) {
+  var i18nConfig = {
+    locales: ['en', 'tw'],
+    translate: function(content, lang) {
+      return content.replace(/([\u3400-\u9FBF]+)/g, function(str, match) {
         return dict[lang][dict.cn[match]] || match
       })
     }
+  }
 
-    return Promise.all([
-      fs.writeFileAsync('assets-build/js/app-en.js', translate(app, 'en')),
-      fs.writeFileAsync('assets-build/js/app-tw.js', translate(app, 'tw')),
-      fs.writeFileAsync('assets-build/js/app-base-en.js', translate(appBase, 'en')),
-      fs.writeFileAsync('assets-build/js/app-base-tw.js', translate(appBase, 'tw'))
-    ])
-  })
+  return gulp.src('assets-build/js/app*.js')
+    .pipe(i18n(i18nConfig))
+    .pipe(gulp.dest('assets-build/js/'))
 })
 
 gulp.task('manifest', ['hasher'], function(next) {
