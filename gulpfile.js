@@ -1,5 +1,4 @@
 var gulp = require('gulp')
-var gutil = require('gulp-util')
 var trac = require('gulp-trac')
 var rename = require('gulp-rename')
 var hasher = require('gulp-hasher')
@@ -8,7 +7,6 @@ var requirejs = require('requirejs')
 var fs = require('fs')
 var _ = require('lodash')
 var properties = require ("properties")
-var stream = require('stream')
 var bluebird = require('bluebird')
 
 bluebird.promisifyAll(fs)
@@ -23,15 +21,6 @@ jsAppModules = _.map(jsAppModules, function(item) {
 jsComponentsModules = _.map(jsComponentsModules, function(item) {
   return 'components/' + item.replace('.js', '')
 })
-
-function getStream(filename, string) {
-  var src = stream.Readable({ objectMode: true })
-  src._read = function () {
-    this.push(new gutil.File({ cwd: "", base: "", path: filename, contents: new Buffer(string) }))
-    this.push(null)
-  }
-  return src
-}
 
 /**
  * r.js资源优化配置文件
@@ -187,10 +176,6 @@ gulp.task('optimize:r.js', ['pre:transform'], function(callback) {
   })
 })
 
-gulp.task('i18n', function() {
-
-})
-
 /**
  * 读取manifest文件信息
  */
@@ -202,7 +187,7 @@ gulp.task('hasher', ['optimize:r.js'], function() {
 /**
  * 国际化直接替换中文资源
  */
-gulp.task('i18n', function() {
+gulp.task('i18n', ['optimize:r.js'], function() {
   var dict = {
     cn: _.invert(properties.parse(fs.readFileSync('src/resource/cn.properties', 'utf8'))),
     en: properties.parse(fs.readFileSync('src/resource/en.properties', 'utf8')),
@@ -234,4 +219,4 @@ gulp.task('manifest', ['hasher'], function(next) {
   fs.writeFile('assets-build/manifest.json', JSON.stringify(manifest, null, '  '), next)
 })
 
-gulp.task('default', ['i18n'])
+gulp.task('default', ['manifest', 'i18n'])
