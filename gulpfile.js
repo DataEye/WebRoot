@@ -197,8 +197,15 @@ gulp.task('i18n', ['optimize:r.js'], function() {
   var i18nConfig = {
     locales: ['en', 'tw'],
     translate: function(content, lang) {
+      var file = this
       return content.replace(/([\u3400-\u9FBF]+)/g, function(str, match) {
-        return dict[lang][dict.cn[match]] || match
+        var result = dict[lang][dict.cn[match]]
+        if (!result) {
+          console.log(`需要国际化：${file.path}\n语言：${lang}`)
+          return match
+        }
+
+        return result
       })
     }
   }
