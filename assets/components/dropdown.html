@@ -1,0 +1,139 @@
+<div class="btn-group dropdown dropdown-select {{isOpen ? 'open' : ''}}"
+     style="display: inline-block;">
+  <button class="btn btn-select dropdown-toggle" type="button"
+          on-click="{{items.length ? 'toggleShow' : ''}}">
+    {{#items}}
+      {{#if .selected}}
+        {{#icon}}
+          <i class="fa {{icon}}"></i>
+        {{/icon}}
+
+        {{label}}
+      {{/if}}
+    {{else}}
+      {{emptyText || '暂无数据'}}
+    {{/items}}
+
+    <span class="caret"></span>
+  </button>
+
+  {{#isOpen}}
+  <ul class="dropdown-menu" style="display: block;min-width: inherit;max-height: 200px; overflow: auto;">
+    {{#items:i}}
+    <li class="{{.selected? 'selected-dropdown-menu' : ''}}" on-click="select:{{i}}">
+      <a tabindex="-1" href="javascript:;">
+        {{#icon}}
+        <i class="fa {{icon}}"></i>
+        {{/icon}}
+        {{label}}
+      </a>
+    </li>
+    {{else}}
+    <li class="">
+      <a href="javascript:;">
+        {{emptyText || '暂无数据'}}
+      </a>
+    </li>
+    {{/items}}
+  </ul>
+  {{/isOpen}}
+</div>
+
+<script>
+  /**
+   * 使用方式
+   * <dropdown items="{{items}}" on-itemchange="selectChange" />
+   * list = [{label: 'X', value: '1'}]
+   */
+  var $ = require('jquery')
+  var Ractive = require('ractive')
+  var _ = require('lodash')
+
+  /**
+   * 调整下拉框的位置，避免在底部被遮挡
+   */
+  function adjustPosition(node, margin) {
+    var offset = node.offset()
+    var height = node.outerHeight()
+    var totalHeight = document.documentElement.offsetHeight
+
+    if (offset.top + height > totalHeight - margin) {
+      node.css('top', -1 * height + 'px')
+    }
+  }
+
+  component.exports = {
+    getItem: function() {
+      return _.find(this.get('items'), {selected: true})
+    },
+    getValue: function() {
+      return _.find(this.get('items'), {selected: true}).value
+    },
+    getLabel: function() {
+      return _.find(this.get('items'), {selected: true}).label
+    },
+    setValue: function(val) {
+      // TODO 选中项目变更
+      var index = _.findIndex(this.get('items'), {value: val})
+      if (index === -1) {
+        index = 0
+      }
+
+      this.set('items.*.selected', false)
+      this.set('items.' + index + '.selected', true)
+
+      this.fire('itemchange', e, e.context.value)
+    },
+    setItems: function() {
+      // TODO 数据源变更
+    },
+    isolated: true,
+    data: {
+      isOpen: false
+    },
+    onrender: function () {
+      var self = this
+
+      /**
+       * 定位选中项目
+       */
+      function locateItem(items, index) {
+        if (Array.isArray(items) && items.length) {
+          if (!_.isNumber(index) || index === -1) {
+            index = _.findIndex(items, {
+              selected: true
+            })
+
+            index = index === -1 ? 0 : index
+          }
+
+          self.set('items.*.selected', false)
+          self.set('items.' + index + '.selected', true)
+        }
+      }
+
+      self.on('toggleShow', function () {
+        this.toggle('isOpen')
+
+        var ul = $(this.find('ul'))
+        if (ul.length) {
+          // 加一个底部footer偏移量
+          adjustPosition(ul, self.get('offset') || 100)
+        }
+      })
+
+      // 选中的时候先清除监听器
+      self.on('select', function (e, i) {
+
+        locateItem(self.get('items'), i)
+
+        this.fire('itemchange', e, e.context.value)
+      })
+
+      var items = self.get('items')
+      var initIndex = _.findIndex(items, {selected: true})
+      locateItem(items, initIndex === -1 ? 0 : initIndex)
+    }
+  }
+
+</script>

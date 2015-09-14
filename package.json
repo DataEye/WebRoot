@@ -2,7 +2,6 @@
   "author": "simonxu <simon@dataeye.com>",
   "description": "dataeye template web project",
   "dependencies": {
-    "bluebird": "^2.10.0",
     "gulp": "^3.9.0",
     "gulp-hasher": "^0.1.0",
     "gulp-rename": "^1.2.2",

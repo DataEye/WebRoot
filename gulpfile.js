@@ -7,9 +7,6 @@ var requirejs = require('requirejs')
 var fs = require('fs')
 var _ = require('lodash')
 var properties = require ("properties")
-var bluebird = require('bluebird')
-
-bluebird.promisifyAll(fs)
 
 var jsAppModules = fs.readdirSync('assets/js/app')
 var jsComponentsModules = fs.readdirSync('assets/js/components')
