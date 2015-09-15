@@ -2,14 +2,15 @@
   "author": "simonxu <simon@dataeye.com>",
   "description": "dataeye template web project",
   "dependencies": {
+    "del": "^2.0.2",
     "gulp": "^3.9.0",
     "gulp-hasher": "^0.1.0",
+    "gulp-lazy-i18n": "^0.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-trac": "0.0.1",
     "gulp-util": "^3.0.6",
     "lodash": "^3.10.1",
     "properties": "^1.2.1",
-    "requirejs": "^2.1.20",
-    "gulp-lazy-i18n": "^0.0.1"
+    "requirejs": "^2.1.20"
   }
 }

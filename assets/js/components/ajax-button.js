@@ -16,16 +16,16 @@ __prop__,
 __export__;
 
   // test 测试
-  var $ = require('jquery');
+  var $ = require('jquery')
   component.exports = {
     onrender: function () {
-      var self = this;
+      var self = this
       this.on('request', function (e) {
-        this.set('loading', true);
+        this.set('loading', true)
 
-        var data = this.get();
-        var url = $.isFunction(data.url) ? data.url() : data.url;
-        var formData = $.isFunction(data.data) ? data.data() : data.data;
+        var data = this.get()
+        var url = $.isFunction(data.url) ? data.url() : data.url
+        var formData = $.isFunction(data.data) ? data.data() : data.data
 
         $.post(url, formData).then(function () {
           self.fire('success', e, arguments)
