@@ -1,2 +1,7 @@
 <h2>你好，世界!</h2>
-<dropdown items="{{items}}" on-itemchange="selectChange" />
+<dropdown items="{{items}}" selected="{{val}}" on-itemchange="selectChange" />
+<div>
+  <button on-click="changeValue:10">change to 10</button>
+  <button on-click="changeItems">change items</button>
+</div>
+{{val}}

@@ -3,7 +3,7 @@
   <button class="btn btn-select dropdown-toggle" type="button"
           on-click="{{items.length ? 'toggleShow' : ''}}">
     {{#items}}
-      {{#if .selected}}
+      {{#if .value === selected}}
         {{#icon}}
           <i class="fa {{icon}}"></i>
         {{/icon}}
@@ -20,7 +20,7 @@
   {{#isOpen}}
   <ul class="dropdown-menu" style="display: block;min-width: inherit;max-height: 200px; overflow: auto;">
     {{#items:i}}
-    <li class="{{.selected? 'selected-dropdown-menu' : ''}}" on-click="select:{{i}}">
+    <li class="{{.value === selected ? 'selected-dropdown-menu' : ''}}" on-click="select:{{i}}">
       <a tabindex="-1" href="javascript:;">
         {{#icon}}
         <i class="fa {{icon}}"></i>
@@ -42,12 +42,17 @@
 <script>
   /**
    * 使用方式
-   * <dropdown items="{{items}}" on-itemchange="selectChange" />
+   * <dropdown items="{{items}}" selected="{{value}}" on-itemchange="selectChange" />
    * list = [{label: 'X', value: '1'}]
    */
   var $ = require('jquery')
   var Ractive = require('ractive')
   var _ = require('lodash')
+  var MSG = {
+    SET_VALUE_MANUALLY: '变更数据源后请主动更新value',
+    EMPTY_DATA: '数据源items为空',
+    INVALID_VALUE: '当前设置value未找到'
+  }
 
   /**
    * 调整下拉框的位置，避免在底部被遮挡
@@ -63,30 +68,6 @@
   }
 
   component.exports = {
-    getItem: function() {
-      return _.find(this.get('items'), {selected: true})
-    },
-    getValue: function() {
-      return _.find(this.get('items'), {selected: true}).value
-    },
-    getLabel: function() {
-      return _.find(this.get('items'), {selected: true}).label
-    },
-    setValue: function(val) {
-      // TODO 选中项目变更
-      var index = _.findIndex(this.get('items'), {value: val})
-      if (index === -1) {
-        index = 0
-      }
-
-      this.set('items.*.selected', false)
-      this.set('items.' + index + '.selected', true)
-
-      this.fire('itemchange', e, e.context.value)
-    },
-    setItems: function() {
-      // TODO 数据源变更
-    },
     isolated: true,
     data: {
       isOpen: false
@@ -95,44 +76,56 @@
       var self = this
 
       /**
-       * 定位选中项目
+       * 监听数据源改变，其实只是做了数据监测
+       * 检测value是否设置正确即可（需要调研方主动设置）
        */
-      function locateItem(items, index) {
+      function onDataSourceChange(items) {
         if (Array.isArray(items) && items.length) {
-          if (!_.isNumber(index) || index === -1) {
-            index = _.findIndex(items, {
-              selected: true
-            })
+          var value = self.get('selected')
+          var index = _.findIndex(items, {
+            value: value
+          })
 
-            index = index === -1 ? 0 : index
+          if (index === -1) {
+            console.warn(MSG.SET_VALUE_MANUALLY)
           }
-
-          self.set('items.*.selected', false)
-          self.set('items.' + index + '.selected', true)
+        } else {
+          console.warn(MSG.EMPTY_DATA)
         }
       }
 
-      self.on('toggleShow', function () {
-        this.toggle('isOpen')
+      function onSelectedChange(value) {
+        var context = _.find(self.get('items'), {value: value})
+        if (!context) {
+          console.warn(MSG.INVALID_VALUE)
+          return
+        }
 
-        var ul = $(this.find('ul'))
+        // 兼容老事件
+        self.fire('changed', null, context.value, context)
+        // 新的事件
+        self.fire('itemchange', null, context.value, context)
+      }
+
+      self.on('toggleShow', function() {
+        self.toggle('isOpen')
+				var ul = $(self.find('ul'))
+        // 底部footer占位
         if (ul.length) {
-          // 加一个底部footer偏移量
           adjustPosition(ul, self.get('offset') || 100)
         }
       })
 
-      // 选中的时候先清除监听器
-      self.on('select', function (e, i) {
+      self.on('select', function(e) {
+        self.set('isOpen', false)
 
-        locateItem(self.get('items'), i)
-
-        this.fire('itemchange', e, e.context.value)
+        // 不要随便变更selected，如果修改为一个不一致的值会切断外部组件的双向绑定关系
+        self.set('selected', e.context.value)
       })
 
-      var items = self.get('items')
-      var initIndex = _.findIndex(items, {selected: true})
-      locateItem(items, initIndex === -1 ? 0 : initIndex)
+      self.observe('items', onDataSourceChange)
+
+      self.observe('selected', onSelectedChange)
     }
   }
 
