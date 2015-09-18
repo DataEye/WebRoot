@@ -79,6 +79,14 @@
     })
   }
 
+  var dropdownItems = []
+  // 鼠标滚动时将下拉框关闭否则位置不对
+  $('body').on('mousewheel.dropdown', function() {
+    dropdownItems.forEach(function(dropdown) {
+      dropdown.set('isOpen', false)
+    })
+  })
+
   component.exports = {
     isolated: true,
     data: {
@@ -87,11 +95,7 @@
     onrender: function () {
       var self = this
 
-      // 鼠标滚动时将下拉框关闭否则位置不对
-      $('body').one('mousewheel.dropdown', function() {
-        self.set('isOpen', false)
-      })
-
+      dropdownItems.push(self)
       /**
        * 监听数据源改变，其实只是做了数据监测
        * 检测value是否设置正确即可（需要调研方主动设置）
@@ -144,6 +148,9 @@
       self.observe('items', onDataSourceChange)
 
       self.observe('selected', onSelectedChange)
+    },
+    onteardown: function() {
+      _.remove(dropdownItems, this)
     }
   }
 
