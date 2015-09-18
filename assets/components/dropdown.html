@@ -64,9 +64,11 @@
     var docHeight = document.documentElement.clientHeight
     var btnHeight = btn.outerHeight()
     var goDown = docHeight - margin > offset.top + btnHeight + height
+    var width = node.width()
 
     node.css({
       position: 'fixed',
+      width: width + 'px',
       left: offset.left + 'px',
       top: goDown ? (offset.top + btnHeight) + 'px' : (offset.top - height) + 'px'
     })
