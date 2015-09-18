@@ -66,6 +66,11 @@
     var goDown = docHeight - margin > offset.top + btnHeight + height
     var width = node.width()
 
+    /**
+     * 使用fixed最简单
+     * 绝对定位在scroll的容器中问题很多，第一是定位问题，第二是展示问题
+     * 比如容器高度只有100，下拉框高毒是200如何展示。
+     */
     node.css({
       position: 'fixed',
       width: width + 'px',
@@ -81,6 +86,11 @@
     },
     onrender: function () {
       var self = this
+
+      // 鼠标滚动时将下拉框关闭否则位置不对
+      $('body').one('mousewheel.dropdown', function() {
+        self.set('isOpen', false)
+      })
 
       /**
        * 监听数据源改变，其实只是做了数据监测
