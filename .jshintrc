@@ -1,6 +1,5 @@
 {
   "asi"      : true,
-  "node"     : true,
   "browser"  : true,
   "eqeqeq"   : true,
   "eqnull"   : true,
@@ -13,5 +12,7 @@
   "boss"     : true,
   "esnext"   : true,
   "predef"  : [
+    "define",
+    "require"
   ]
 }
