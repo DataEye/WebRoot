@@ -1,0 +1,164 @@
+<link rel="ractive" href="dropdown.html" name="dropdown" />
+
+{{^hidden}}
+<div class="pager">
+  <div class="pager-switch pull-left">
+    <span>每页显示</span>
+    {{#if sizes && pagesize}}
+    <dropdown items="{{sizes}}" selected="{{pagesize}}" />
+    {{/if}}
+    <span>条记录</span>(共{{totalPage}}页，{{total}}条记录)
+  </div>
+
+  <div class="pager-pagination {{size ? 'pager-pagination-' + size : ''}} pull-right">
+    <ul class="pagination">
+      <li class="first {{pageid === 1 ? 'disabled' : ''}}"
+        {{#if pageid !== 1}} on-click="goto:1" {{/if}}>
+        <a href="javascript:;">
+          <i class="fa fa-step-backward"></i>
+        </a>
+      </li>
+      <li class="prev {{pageid === 1 ? 'disabled' : ''}}"
+          {{#if pageid !== 1}} on-click="goto:{{pageid - 1}}" {{/if}}>
+        <a href="javascript:;">
+          <i class="fa fa-backward"></i>
+        </a>
+      </li>
+
+      {{#pages}}
+      <li class="{{pageid === . ? 'active' : ''}}">
+        <a href="javascript:;"  on-click="goto:{{.}}">{{.}}</a>
+      </li>
+      {{/pages}}
+
+      <li class="next {{pageid === totalPage ? 'disabled' : ''}}"
+          {{#if pageid !== totalPage}} on-click="goto:{{pageid + 1}}" {{/if}}>
+        <a href="javascript:;">
+          <i class="fa fa-forward"></i>
+        </a>
+      </li>
+      <li class="last {{pageid === totalPage ? 'disabled' : ''}}"
+          {{#if pageid !== totalPage}} on-click="goto:{{totalPage}}" {{/if}}>
+        <a href="javascript:;"><i class="fa fa-step-forward"></i></a>
+      </li>
+    </ul>
+  </div>
+
+  <div style="clear: both;"></div>
+</div>
+{{/hidden}}
+<script>
+  var _ = require('lodash')
+
+  component.exports = {
+    isolated: true,
+    data: {
+      // 条数小于最小值不展示分页组件
+      hideOnMin: true
+    },
+    computed: {
+      hidden: function() {
+        // 小于最小的页大小时隐藏
+        var min = Math.min.apply(Math, _.values(this.get('sizes')))
+        return this.get('hideOnMin') && this.get('total') < min
+      },
+      totalPage: function() {
+        var total = this.get('total')
+        var size = this.get('pagesize')
+
+        return size > 0 && total > 0 && Math.ceil(total / size)
+      }
+    },
+    onrender: function() {
+      var app = this
+      /**
+       * 这几个配置需要建立双向绑定，需要外部设置
+       * pageid 页码
+       * pagesize 当前页大小
+       * total 总条数
+       */
+      var props = ['pageid', 'pagesize', 'total']
+      _.each(props, function(prop) {
+        if (typeof app.get(prop) !== 'number') {
+          throw new Error('请手动配置属性' + prop)
+        }
+      })
+
+      /**
+       * sizes 可选页大小
+       */
+       if (!app.get('sizes')) {
+        app.set('pagesize', 10)
+        app.set('sizes', [
+          {label: '10', value: 10},
+          {label: '20', value: 20},
+          {label: '50', value: 50}
+        ])
+      }
+
+      /**
+       * width 右侧页面宽度 |< < 8 9 10 11 12 > >|
+       */
+      if (!app.get('width')) {
+        app.set('width', 2)
+      }
+
+      /**
+       * 跳转到指定页码
+       */
+      function onPageChange(pageid) {
+        var total = app.get('total')
+        var width = app.get('width')
+        var totalPage = app.get('totalPage')
+        var start = Math.max(1, pageid - width)
+        var end = Math.min(pageid + width, totalPage)
+
+        var items = []
+        for (var i = start; i <= end; i++) {
+          items.push(i)
+        }
+
+        var paddingLen = width * 2 + 1 - items.length
+        // 边界处理
+        if (paddingLen > 0) {
+          for (var i = 1; i <= paddingLen; i++) {
+            // 尾部
+            if (start === 1 && i + end <= totalPage) {
+              items.push(i + end)
+            }
+            // 头部
+            if (end === totalPage && start - i >= 1) {
+              items.unshift(start - i)
+            }
+          }
+        }
+
+        app.set('pages', items)
+        // 触发页码转换事件
+        app.fire('pagechange', null, app.get())
+      }
+
+      /**
+       * pagesize和total发生改变
+       * 只需要更新总页数，然后选中第一页就可以了
+       */
+      function onTotalPageChange() {
+        var current = app.get('pageid')
+        if (current === 1) {
+          onPageChange(1)
+        } else {
+          app.set('pageid', 1)
+        }
+      }
+
+      app.on('goto', function(e, pageid) {
+        app.set('pageid', pageid)
+      })
+
+      app.observe('pageid', onPageChange)
+      app.observe('pagesize total', onTotalPageChange, {
+        init: false
+      })
+    }
+  }
+</script>

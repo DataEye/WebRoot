@@ -8,12 +8,14 @@
  *
  */
 define([
-  'jquery', 'ractive', 'text!tpl/sample.html', 'rvc!components/dropdown'
-], function($, Ractive, tpl, Dropdown) {
+  'jquery', 'ractive', 'text!tpl/sample.html',
+  'rvc!components/dropdown', 'rvc!components/pager'
+], function($, Ractive, tpl, Dropdown, Pager) {
   var app;
   return {
     render: function() {
       Ractive.components.dropdown = Dropdown
+      Ractive.components.pager = Pager
 
       app = new Ractive({
         template: tpl,
@@ -24,7 +26,11 @@ define([
             {label: 10, value: 10},
             {label: 20, value: 20},
             {label: 50, value: 50}
-          ]
+          ],
+          total: 51,
+          pageid: 2,
+          width: 2,
+          pagesize: 10
         }
       })
 
@@ -48,6 +54,10 @@ define([
 
         var dropdown = app.findComponent('dropdown')
         console.log('selected', dropdown.get('selected'))
+      })
+
+      app.on('pager.pagechange', function(e, data) {
+        console.log('翻页了', data.pageid)
       })
 
       app.fire('selectChange', null, 20)
