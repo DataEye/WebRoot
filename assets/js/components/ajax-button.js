@@ -15,8 +15,8 @@ component={},
 __prop__,
 __export__;
 
-  // test 测试
   var $ = require('jquery')
+
   component.exports = {
     onrender: function () {
       var self = this

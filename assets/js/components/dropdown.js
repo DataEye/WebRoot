@@ -1,13 +1,11 @@
 define([
 	"jquery",
-	"ractive",
 	"lodash",
 	"require",
 	"ractive"
 ], function(
 	__import0__,
 	__import1__,
-	__import2__,
 	require,
 	Ractive
 ){
@@ -25,7 +23,6 @@ __export__;
    * list = [{label: 'X', value: '1'}]
    */
   var $ = require('jquery')
-  var Ractive = require('ractive')
   var _ = require('lodash')
   var MSG = {
     SET_VALUE_MANUALLY: '变更数据源后请主动更新value',
@@ -35,16 +32,43 @@ __export__;
 
   /**
    * 调整下拉框的位置，避免在底部被遮挡
+   * 使用fixed，有些scroll的容器不好处理
    */
-  function adjustPosition(node, margin) {
-    var offset = node.offset()
+  function adjustPosition(node, btn, margin) {
+    var offset = btn[0].getBoundingClientRect()
     var height = node.outerHeight()
-    var totalHeight = document.documentElement.offsetHeight
-
-    if (offset.top + height > totalHeight - margin) {
-      node.css('top', -1 * height + 'px')
+    var docHeight = document.documentElement.clientHeight
+    var docWidth = document.documentElement.clientWidth
+    var btnHeight = btn.outerHeight()
+    var width = node.width()
+    var goDown = docHeight - margin > offset.top + btnHeight + height
+    var leftPadding = docWidth - offset.left - width
+    var left = offset.left
+    if (leftPadding < 0) {
+      // magic number here
+      left = left + leftPadding - 20
     }
+
+    /**
+     * 使用fixed最简单
+     * 绝对定位在scroll的容器中问题很多，第一是定位问题，第二是展示问题
+     * 比如容器高度只有100，下拉框高毒是200如何展示。
+     */
+    node.css({
+      position: 'fixed',
+      width: width + 'px',
+      left: left + 'px',
+      top: goDown ? (offset.top + btnHeight) + 'px' : (offset.top - height) + 'px'
+    })
   }
+
+  var dropdownItems = []
+  // 鼠标滚动时将下拉框关闭否则位置不对
+  $('body').on('mousewheel.dropdown', function() {
+    dropdownItems.forEach(function(dropdown) {
+      dropdown.set('isOpen', false)
+    })
+  })
 
   component.exports = {
     isolated: true,
@@ -54,6 +78,7 @@ __export__;
     onrender: function () {
       var self = this
 
+      dropdownItems.push(self)
       /**
        * 监听数据源改变，其实只是做了数据监测
        * 检测value是否设置正确即可（需要调研方主动设置）
@@ -88,10 +113,11 @@ __export__;
 
       self.on('toggleShow', function() {
         self.toggle('isOpen')
-				var ul = $(self.find('ul'))
-        // 底部footer占位
+
+        var ul = $(this.find('ul'))
+        var btn = $(this.find('button'))
         if (ul.length) {
-          adjustPosition(ul, self.get('offset') || 100)
+          adjustPosition(ul, btn, self.get('offset') || 100)
         }
       })
 
@@ -105,6 +131,9 @@ __export__;
       self.observe('items', onDataSourceChange)
 
       self.observe('selected', onSelectedChange)
+    },
+    onteardown: function() {
+      _.remove(dropdownItems, this)
     }
   }
 
