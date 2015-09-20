@@ -9,19 +9,21 @@
  */
 define([
   'jquery', 'ractive', 'text!tpl/sample.html',
-  'rvc!components/dropdown', 'rvc!components/pager'
-], function($, Ractive, tpl, Dropdown, Pager) {
+  'rvc!components/dropdown', 'rvc!components/pager', 'rvc!components/text-input'
+], function($, Ractive, tpl, Dropdown, Pager, TextInput) {
   var app;
   return {
     render: function() {
       Ractive.components.dropdown = Dropdown
       Ractive.components.pager = Pager
+      Ractive.components.textinput = TextInput
 
       app = new Ractive({
         template: tpl,
         el: '#wrapper',
         data: {
           val: 20,
+          x: 'abc@abc.com',
           items: [
             {label: 10, value: 10},
             {label: 20, value: 20},
@@ -58,6 +60,10 @@ define([
 
       app.on('pager.pagechange', function(e, data) {
         console.log('翻页了', data.pageid)
+      })
+
+      app.on('textinput.input', function(e) {
+        console.log(e.node.value)
       })
 
       app.fire('selectChange', null, 20)
