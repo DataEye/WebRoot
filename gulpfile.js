@@ -54,7 +54,7 @@ function getRequireJSConfig() {
     // TODO modules配置没有生效
     findNestedDependencies: false,
 
-    // build预处理，暂未使用
+    // build预处理
     onBuildRead: function (moduleName, path, contents) {
       console.log(`读取:${moduleName}`)
       /**
