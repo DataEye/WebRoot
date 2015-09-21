@@ -1,9 +1,11 @@
 define([
+	"jquery",
 	"bootstrap/colorpicker",
 	"require",
 	"ractive"
 ], function(
 	__import0__,
+	__import1__,
 	require,
 	Ractive
 ){
@@ -15,6 +17,7 @@ component={},
 __prop__,
 __export__;
 
+  var $ = require('jquery')
   require('bootstrap/colorpicker')
 
   /**

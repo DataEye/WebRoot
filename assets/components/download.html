@@ -1,0 +1,75 @@
+{{#if url}}
+<a href="javascript:;" decorator="cleanmenu: {{id ? 'download-' + id : 'download'}}"
+   on-click="generateReport">
+  <i class="fa fa-download"></i>
+</a>
+{{#isOpen}}
+<div class="tooltip fade bottom in download-box">
+  <div class="tooltip-arrow"></div>
+  <div class="tooltip-inner">
+    {{#if loading}}
+    <i class="fa fa-spinner fa-pulse"></i>
+    正在提交下载任务，请稍候...
+    {{/if}}
+
+    {{#if generated}}
+    下载任务已提交,请前往<a class="blue-light" target="_blank" href="#/settings/download">下载中心</a>查看进度。
+    {{/if}}
+
+    {{#if empty}}
+    数据为空
+    {{/if}}
+  </div>
+</div>
+{{/isOpen}}
+{{/if}}
+
+<script>
+  var $ = require('jquery')
+  require('components/menu-clean')
+
+  function wrapError(xhr) {
+    if (xhr.responseJSON)
+      return xhr.responseJSON
+
+    return {
+      statusCode: xhr.status,
+      content: xhr.responseText + xhr.statusText ,
+      id: Date.now()
+    }
+  }
+
+  component.exports = {
+    data: {
+      loading: false,
+      generated: false
+    },
+    onrender: function() {
+      var app = this
+
+      app.on('generateReport', function() {
+        var url = app.get('url')
+        var data = app.get('data') || {}
+
+        if (!url) {
+          console.log('没有配置url')
+          return
+        }
+
+        app.set('loading', true)
+        app.set('generated', false)
+        app.set('empty', false)
+        app.set('isOpen', true)
+        $.post(url, data).then(function(json) {
+          var status = json.statusCode
+          app.set('generated', status == 200)
+          app.set('empty', status == 201)
+        }).fail(function(xhr) {
+          app.set('ajaxError', wrapError(xhr))
+        }).always(function() {
+          app.set('loading', false)
+        })
+      })
+    }
+  }
+</script>
