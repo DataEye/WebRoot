@@ -5,6 +5,7 @@ var hasher = require('gulp-hasher')
 var i18n = require('gulp-lazy-i18n')
 var requirejs = require('requirejs')
 var fs = require('fs')
+var path = require('path')
 var del = require('del')
 var _ = require('lodash')
 var properties = require ("properties")
@@ -17,7 +18,7 @@ function getRequireJSConfig() {
     return 'app/' + item.replace('.js', '')
   })
 
-  jsComponentsModules = _.map(jsComponentsModules, function(item) {
+  jsComponentsModules = _.map(_.filter(jsComponentsModules, (x) => {return path.extname(x) === '.js'}), function(item) {
     return 'components/' + item.replace('.js', '')
   })
 
@@ -167,10 +168,10 @@ function getRequireJSConfig() {
  * 转换single file components为js文件
  */
 gulp.task('pre:transform', function() {
-  return gulp.src('assets/components/*.html')
+  return gulp.src('assets/js/components/*.html')
     .pipe(trac({moduleFormat: 'amd'}))
     .pipe(rename(function(filename) {filename.extname = '.js'}))
-    .pipe(gulp.dest('assets/js/components/'))
+    .pipe(gulp.dest('assets/js/components'))
 })
 
 /**
@@ -178,7 +179,6 @@ gulp.task('pre:transform', function() {
  */
 gulp.task('optimize:r.js', function(callback) {
     var config = getRequireJSConfig()
-    console.log(JSON.stringify(config.modules, null, '  '))
     requirejs.optimize(config, function(res) {
       callback(null, res)
     })
@@ -193,7 +193,7 @@ gulp.task('hasher', ['optimize:r.js'], function() {
 })
 
 gulp.task('del', ['optimize:r.js'], function(callback) {
-  del.sync('assets-build/components')
+  del.sync('assets-build/js/components')
   callback()
 })
 
