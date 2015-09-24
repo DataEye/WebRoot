@@ -1,21 +1,29 @@
 <link rel="ractive" href="./dropdown.html" name="dropdown"/>
 <link rel="ractive" href="./pager.html" name="pager"/>
 
-<div class="rdatagrid">
-  {{#if options}}
-  <div class="rwrapper {{options.leftColumns || options.rightColumns ? 'fixed-cols' : ''}}">
-    {{#ajaxError}}
+<datagrid url="" params=""  datalist="" server=""
+  field="content"
+  pageid="" pagesize="" on-success="" on-fail="">
+</datagrid>
+
+<div class="rdatagird">
+  <!--配置请求url或者数据源才展示界面-->
+  {{#if url || datalist}}
+  <div class="rwrapper">
+    <!--请求出错-->
+    {{#if ajaxError}}
     <div class="rerror text-center">
       <i class="fa fa-exclamation-circle"></i>
 
       <div>
         请求出错，请稍后重试 <br>
-        ({{statusCode}}:{{content || '网络连接错误'}} - {{id}})
+        ({{ajaxError.statusCode}}:{{ajaxError.content || '网络连接错误'}} - {{ajaxError.id}})
       </div>
     </div>
-    {{else}}
-    {{#if datalist}}
-    {{#if reloadList}}
+    {{/if}}
+
+    <!--正在加载-->
+    {{#if isLoading}}
     <div class="mask-loading">
       <div class="rloading text-center">
         <i class="fa fa-spinner fa-pulse"></i>
@@ -23,49 +31,28 @@
         <div>正在加载，请稍候...</div>
       </div>
     </div>
-    {{/if}}
-
-    {{#if options.leftColumns}}
-    <div class="rleftcols">
-      {{>content}}
-    </div>
-    {{/if}}
-
-    <div class="rcols">
-      {{>content}}
-    </div>
-
-    {{#if options.rightColumns}}
-    <div class="rrightcols">
-      {{>content}}
-    </div>
-    {{/if}}
     {{else}}
-    {{#if datalist == null}}
-    <div class="rloading text-center">
-      <i class="fa fa-spinner fa-pulse"></i>
+      <!--在有数据的情况下重新请求，比如筛选-->
+      {{#if datalist}}
+      <div class="rcols">
+        {{>content}}
+      </div>
+      {{else}}
+      <div class="rempty text-center">
+        <i class="fa fa-exclamation-circle"></i>
 
-      <div>正在加载，请稍候...</div>
-    </div>
-    {{else}}
-    <div class="rempty text-center">
-      <i class="fa fa-exclamation-circle"></i>
-
-      <div>暂无数据</div>
-    </div>
+        <div>暂无数据</div>
+      </div>
+      {{/if}}
     {{/if}}
-    {{/if}}
-    {{/ajaxError}}
   </div>
+
+  <pager pageid="{{pageid}}" pagesize="{{pagesize}}" total="{{datasource.length}}" />
   {{/if}}
-
-  {{! 这个需要放在外层，js会用到}}
-  <pager></pager>
 </div>
-
 <script>
   var $ = require('jquery')
-  var _ = reqiore('lodash')
+  var _ = require('lodash')
   var AsyncRender = require('components/async-render')
   var utils = require('utils')
 
@@ -78,7 +65,7 @@
   }
 
   function getJsonField(app) {
-    return app.get('jsonFieldName') || jsonNameConfig.dataSourceName
+    return app.get('field') || jsonNameConfig.dataSourceName
   }
 
   // 获取ajax的动态参数
@@ -87,6 +74,7 @@
     if (!$.isPlainObject(postData)) {
       throw new Error('params配置错误')
     }
+
     postData[jsonNameConfig.pageIDName] = pageID
     postData[jsonNameConfig.pageSizeName] = pageSize
     return postData
@@ -111,24 +99,6 @@
     }
   }
 
-  /**
-   * 是否对表格数据进行补齐
-   * 比如只有三条数据，则剩余的使用空行补齐
-   */
-  function normalizeDatalist(app, datalist, pageSize) {
-    datalist = datalist || []
-
-    if (!app.get('padding') || datalist.length === 0 || datalist.length === pageSize) {
-      app.set('datalist', datalist)
-      return
-    }
-
-    _.times(pageSize - datalist.length, function () {
-      datalist.push({isPadding: true})
-    })
-    app.set('datalist', datalist)
-  }
-
   // 表头排序
   var sortOrder = {}
 
@@ -141,24 +111,6 @@
     }
     app.set('order.' + field, lastOrderASC ? 'sort-desc' : 'sort-asc')
     sortOrder[field] = lastOrderASC ? 'DESC' : 'ASC'
-  }
-
-  // 设置固定列
-  function setFixedCols(app) {
-    var options = app.get('options')
-    var selector = 'thead>tr, tbody>tr'
-
-    if (options.leftColumns > 0) {
-      $(app.find('.rleftcols')).find(selector).each(function () {
-        $('*:lt(' + options.leftColumns + ')', this).show()
-      })
-    }
-
-    if (options.rightColumns > 0) {
-      $(app.find('.rrightcols')).find(selector).each(function () {
-        $('*:gt(' + (-1 * options.rightColumns - 1) + ')', this).show()
-      })
-    }
   }
 
   // 获取表格数据相关信息（本页总和、平均，全部总和、平均）
@@ -210,8 +162,6 @@
         return isFloat ? avg : Math.floor(avg)
       }
     }
-
-    // TODO服务端需要返回一个属性计算每个字段的总和
   }
 
   // 开始渲染表格，设置关键数据源
@@ -285,16 +235,11 @@
     },
     isolated: false,
     data: {
-      // 是否对表格数据进行补齐
-      padding: false,
       compute: compute
     },
     oninit: function () {
       var app = this
-      var pager = app.findComponent('pager')
       var data = this.get()
-      var options = data.options
-      if (!options) return
 
       for (var key in jsonNameConfig) {
         options[key] && (jsonNameConfig[key] = options[key])
@@ -435,8 +380,6 @@
         renderClientPagination(app, pager, options.datalist || [])
         return
       }
-
-      throw new Error('缺少配置：ajaxUrl或datalist')
     }
   }
 </script>
