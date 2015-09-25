@@ -8,15 +8,26 @@
  *
  */
 define([
-  'jquery', 'ractive', 'text!tpl/sample.html',
-  'rvc!components/dropdown', 'rvc!components/pager', 'rvc!components/text-input'
-], function($, Ractive, tpl, Dropdown, Pager, TextInput) {
+  'jquery', 'ractive', 'text!tpl/sample.html', 'lodash',
+  'rvc!components/dropdown', 'rvc!components/pager', 'rvc!components/text-input',
+  'rvc!components/datagrid'
+], function($, Ractive, tpl, _, Dropdown, Pager, TextInput, DataGrid) {
   var app;
   return {
     render: function() {
       Ractive.components.dropdown = Dropdown
       Ractive.components.pager = Pager
       Ractive.components.textinput = TextInput
+      Ractive.components.datagrid = DataGrid
+
+      var datasource = []
+      _.times(33, function(i) {
+        datasource.push({
+          x: i + 1,
+          y: i + 2,
+          z: i + 3
+        })
+      })
 
       app = new Ractive({
         template: tpl,
@@ -32,11 +43,12 @@ define([
           total: 51,
           pageid: 2,
           width: 2,
-          pagesize: 10
+          pagesize: 10,
+          datasource: datasource
         }
       })
 
-      // dropdown内部事件触发
+// dropdown内部事件触发
       app.on('selectChange', function(e, value) {
         console.log('ajaxing with value', value)
       })

@@ -15,7 +15,6 @@ width:{{width}}
 pagesize:{{pagesize}}
 <br/>
 total:{{total}}
-
 <hr/>
 
 <div style="width: 300px;">
@@ -24,5 +23,40 @@ total:{{total}}
   {{x}}
 </div>
 
+<hr>
 
+<datagrid url="./test.json" server="true">
+  <table class="table table-bordered">
+    {{#datalist}}
+      <tr>
+        <td>{{x}}</td>
+        <td>{{y}}</td>
+        <td>{{z}}</td>
+      </tr>
+    {{/datalist}}
+  </table>
+</datagrid>
 
+<datagrid url="./test.json">
+  <table class="table table-bordered">
+    {{#datalist}}
+      <tr>
+        <td>{{x}}</td>
+        <td>{{y}}</td>
+        <td>{{z}}</td>
+      </tr>
+    {{/datalist}}
+  </table>
+</datagrid>
+
+<datagrid datasource="{{datasource}}">
+  <table class="table table-bordered">
+    {{#datalist}}
+      <tr>
+        <td>{{x}}</td>
+        <td>{{y}}</td>
+        <td>{{z}}</td>
+      </tr>
+    {{/datalist}}
+  </table>
+</datagrid>
