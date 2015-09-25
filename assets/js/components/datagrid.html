@@ -51,6 +51,7 @@
 </div>
 <script>
   var $ = require('jquery')
+  var _ = require('lodash')
   var MSG = {
     REQ_ERROR: '请求出错',
     MISSING_CLIENT_OPTS: '客户端分页需要配置请求url或者datasource',
@@ -59,6 +60,20 @@
 
   function tryExec(str) {
     return $.isFunction(str) ? str() : str
+  }
+
+  /**
+   * 获取对象属性，支持嵌套获取 getProperty(window, 'location.href')
+   */
+  function getProperty(obj, field) {
+    if (!obj) return obj
+
+    field = field || String(field)
+    var fields = field.split('.')
+
+    return fields.reduce(function(prev, current) {
+      return prev[current]
+    }, obj)
   }
 
   // 封装统一的ajaxError对象
@@ -133,7 +148,39 @@
       app.set('datalist', datalist)
     })
 
-    // TODO 表头排序
+    /**
+     * 排序只能根据一个字段排
+     */
+    app.on('sortBy', function datagridSort(e, field) {
+      var datasource = app.get('datasource')
+      var currentField = app.get('sortField')
+      var sortOrder = app.get('sortOrder')
+      if (currentField === field) {
+        app.set('sortOrder', !sortOrder || sortOrder === 'asc' ? 'desc' : 'asc')
+      } else {
+        app.set('sortField', field)
+        app.set('sortOrder', 'desc')
+      }
+
+      var sortVal = app.get('sortOrder') === 'desc' ? -1 : 1
+      var sorted = _.sortBy(datasource, function(item) {
+        // 返回正数升序
+        return getProperty(item, field) * sortVal
+      })
+      app.set('datasource', sorted)
+
+      /**
+       * 如果当前为第一页需要主动触发
+       */
+      if (app.get('pageid') === 1) {
+        app.fire('request', null, {
+          pageid: 1,
+          pagesize: app.get('pagesize')
+        })
+      } else {
+        app.set('pageid', 1)
+      }
+    })
   }
 
   function renderSeverPagination(app, data, errorHandler) {
@@ -196,7 +243,20 @@
       datalist: [],
       // 全部数据
       datasource: [],
-      total: 0
+      // 数据条数
+      total: 0,
+      // 排序字段信息
+      sortField: '',
+      // 默认排序信息
+      sortOrder: '',
+      // 获取字段当前排序顺序asc, desc
+      getSortClass: function(field) {
+        if (this.get('sortField') === field) {
+          return 'sortable-' + this.get('sortOrder')
+        }
+
+        return 'sortable'
+      }
     },
     onrender: function () {
       var app = this
