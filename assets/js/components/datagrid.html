@@ -44,8 +44,8 @@
     {{/if}}
   </div>
 
-  {{#if datasource}}
-  <pager pageid="{{pageid}}" pagesize="{{pagesize}}" total="{{datasource.length}}" on-pagechange="request" />
+  {{#if total}}
+  <pager pageid="{{pageid}}" pagesize="{{pagesize}}" total="{{total}}" on-pagechange="request" />
   {{/if}}
   {{/if}}
 </div>
@@ -96,14 +96,21 @@
 
       app.set('isLoading', true)
       $.post(url, params).then(function requestData(json) {
-        app.set('datasource', json.content || [])
+        var datasource = json.content || []
+        app.set('datasource', datasource)
         app.set('ajaxError', null)
+        /**
+         * 这里的设置要放在最后，如果放在前面，触发的事件无法获取datasource
+         */
+        app.set('total', datasource.length)
+
       }).fail(errorHandler).always(function always() {
         app.set('isLoading', false)
       })
     } else if (data.datasource) {
       app.set('ajaxError', null)
       app.set('isLoading', false)
+      app.set('total', data.datasource.length)
     } else {
       throw new Error(MSG.MISSING_CLIENT_OPTS)
     }
@@ -149,11 +156,11 @@
     }
 
     /*
-     * 先请求一次然后绑定事件
-     * 因为没有设置datasource的话pager不会render
-     * 如果pager一直存在，然后直接上来就绑定事件会触发两次请求
+     * 先请求一次获取总条数然后绑定事件
      */
-    requestByPage(data.pageid, data.pagesize, function() {
+    requestByPage(data.pageid, data.pagesize, function(json) {
+      // ?? 这里是每一次都设置还是只设置一次
+      app.set('total', json.total)
       app.on('request', function datagridPageChange(e, info) {
         requestByPage(info.pageid, info.pagesize)
       })
@@ -188,9 +195,10 @@
       // 当页数据
       datalist: [],
       // 全部数据
-      datasource: []
+      datasource: [],
+      total: 0
     },
-    oninit: function () {
+    onrender: function () {
       var app = this
       var data = this.get()
       var errorHandler = onAjaxError(app)
