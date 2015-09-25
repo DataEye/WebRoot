@@ -18,7 +18,7 @@ function getRequireJSConfig() {
     return 'app/' + item.replace('.js', '')
   })
 
-  jsComponentsModules = _.map(_.filter(jsComponentsModules, (x) => {return path.extname(x) === '.js'}), function(item) {
+  jsComponentsModules = _.map(_.filter(jsComponentsModules, function(x){return path.extname(x) === '.js'}), function(item) {
     return 'components/' + item.replace('.js', '')
   })
 

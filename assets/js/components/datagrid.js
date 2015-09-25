@@ -2,8 +2,7 @@ define([
 	"./pager",
 	"./dropdown",
 	"jquery",
-	"components/async-render",
-	"utils",
+	"lodash",
 	"require",
 	"ractive"
 ], function(
@@ -11,13 +10,12 @@ define([
 	__import1__,
 	__import2__,
 	__import3__,
-	__import4__,
 	require,
 	Ractive
 ){
 
 var __options__ = {
-	template: {v:3,t:[{p:[4,1,117],t:7,e:"div",a:{"class":"rdatagrid"},f:[{t:4,f:[{p:[6,3,161],t:7,e:"div",a:{"class":["rwrapper ",{t:2,x:{r:["options.leftColumns","options.rightColumns"],s:"_0||_1?\"fixed-cols\":\"\""},p:[6,24,182]}]},f:[{t:4,f:[{p:[8,5,275],t:7,e:"div",a:{"class":"rerror text-center"},f:[{p:[9,7,314],t:7,e:"i",a:{"class":"fa fa-exclamation-circle"}}," ",{p:[11,7,362],t:7,e:"div",f:["请求出错，请稍后重试 ",{p:[12,20,387],t:7,e:"br"}," (",{t:2,r:"statusCode",p:[13,10,401]},":",{t:2,x:{r:["content"],s:"_0||\"网络连接错误\""},p:[13,25,416]}," - ",{t:2,r:"id",p:[13,51,442]},")"]}]}],r:"ajaxError",p:[7,5,256]},{t:4,n:51,f:[{t:4,f:[{t:4,f:[{p:[19,5,535],t:7,e:"div",a:{"class":"mask-loading"},f:[{p:[20,7,568],t:7,e:"div",a:{"class":"rloading text-center"},f:[{p:[21,9,611],t:7,e:"i",a:{"class":"fa fa-spinner fa-pulse"}}," ",{p:[23,9,659],t:7,e:"div",f:["正在加载，请稍候..."]}]}]}],n:50,r:"reloadList",p:[18,5,512]}," ",{t:4,f:[{p:[29,5,755],t:7,e:"div",a:{"class":"rleftcols"},f:[{t:8,r:"content",p:[30,7,785]}]}],n:50,r:"options.leftColumns",p:[28,5,723]}," ",{p:[34,5,826],t:7,e:"div",a:{"class":"rcols"},f:[{t:8,r:"content",p:[35,7,852]}]}," ",{t:4,f:[{p:[39,5,914],t:7,e:"div",a:{"class":"rrightcols"},f:[{t:8,r:"content",p:[40,7,945]}]}],n:50,r:"options.rightColumns",p:[38,5,881]}],n:50,r:"datalist",p:[17,5,491]},{t:4,n:51,f:[{t:4,f:[{p:[45,5,1027],t:7,e:"div",a:{"class":"rloading text-center"},f:[{p:[46,7,1068],t:7,e:"i",a:{"class":"fa fa-spinner fa-pulse"}}," ",{p:[48,7,1114],t:7,e:"div",f:["正在加载，请稍候..."]}]}],n:50,x:{r:["datalist"],s:"_0==null"},p:[44,5,998]},{t:4,n:51,f:[{p:[51,5,1165],t:7,e:"div",a:{"class":"rempty text-center"},f:[{p:[52,7,1204],t:7,e:"i",a:{"class":"fa fa-exclamation-circle"}}," ",{p:[54,7,1252],t:7,e:"div",f:["暂无数据"]}]}],x:{r:["datalist"],s:"_0==null"}}],r:"datalist"}],r:"ajaxError"}]}],n:50,r:"options",p:[5,3,143]}," ",{p:[63,3,1367],t:7,e:"pager"}]}]},
+	template: {v:3,t:[{p:[4,1,117],t:7,e:"div",a:{"class":"rdatagird"},f:[" ",{t:4,f:[{p:[7,3,198],t:7,e:"div",a:{"class":"rwrapper"},f:[" ",{t:4,f:[{p:[10,5,263],t:7,e:"div",a:{"class":"rerror text-center"},f:[{p:[11,7,302],t:7,e:"i",a:{"class":"fa fa-exclamation-circle"}}," ",{p:[13,7,350],t:7,e:"div",f:["请求出错，请稍后重试 ",{p:[14,20,375],t:7,e:"br"}," (",{t:2,r:"ajaxError.statusCode",p:[15,10,389]},":",{t:3,x:{r:["ajaxError.content"],s:"_0||\"网络连接错误\""},p:[15,35,414]}," - ",{t:2,r:"ajaxError.id",p:[15,73,452]},")"]}]}],n:50,r:"ajaxError",p:[9,5,241]}," ",{t:4,f:[{p:[22,5,563],t:7,e:"div",a:{"class":"mask-loading"},f:[{p:[23,7,596],t:7,e:"div",a:{"class":"rloading text-center"},f:[{p:[24,9,639],t:7,e:"i",a:{"class":"fa fa-spinner fa-pulse"}}," ",{p:[26,9,687],t:7,e:"div",f:["正在加载，请稍候..."]}]}]}],n:50,r:"isLoading",p:[21,5,541]}," ",{t:4,f:[{p:[33,5,815],t:7,e:"div",a:{"class":"rcols"},f:[{t:8,r:"content",p:[34,7,841]}]}],n:50,x:{r:["ajaxError","datalist"],s:"!_0&&_1"},p:[32,5,780]}," ",{t:4,f:[{p:[39,5,918],t:7,e:"div",a:{"class":"rempty text-center"},f:[{p:[40,7,957],t:7,e:"i",a:{"class":"fa fa-exclamation-circle"}}," ",{p:[42,7,1005],t:7,e:"div",f:["暂无数据"]}]}],n:50,x:{r:["ajaxError","datalist"],s:"!_0&&!_1"},p:[38,5,882]}]}," ",{t:4,f:[{p:[48,3,1072],t:7,e:"pager",a:{pageid:[{t:2,r:"pageid",p:[48,18,1087]}],pagesize:[{t:2,r:"pagesize",p:[48,40,1109]}],total:[{t:2,r:"total",p:[48,61,1130]}]},v:{pagechange:"request"}}],n:50,r:"total",p:[47,3,1056]}],n:50,x:{r:["url","datasource"],s:"_0||_1"},p:[6,3,170]}]}]},
 	components:{	pager: __import0__,
 	dropdown: __import1__}
 },
@@ -26,31 +24,29 @@ __prop__,
 __export__;
 
   var $ = require('jquery')
-  var _ = reqiore('lodash')
-  var AsyncRender = require('components/async-render')
-  var utils = require('utils')
-
-  // 服务端json字段名称配置
-  var jsonNameConfig = {
-    totalRecordName: 'totalRecord',
-    dataSourceName: 'content',
-    pageIDName: 'pageID',
-    pageSizeName: 'pageSize'
+  var _ = require('lodash')
+  var MSG = {
+    REQ_ERROR: '请求出错',
+    MISSING_CLIENT_OPTS: '客户端分页需要配置请求url或者datasource',
+    MISSING_SERVER_OPTS: '服务端分页需要配置url'
   }
 
-  function getJsonField(app) {
-    return app.get('jsonFieldName') || jsonNameConfig.dataSourceName
+  function tryExec(str) {
+    return $.isFunction(str) ? str() : str
   }
 
-  // 获取ajax的动态参数
-  var getParams = function (params, pageID, pageSize) {
-    var postData = $.isFunction(params) ? params() : (params || {})
-    if (!$.isPlainObject(postData)) {
-      throw new Error('params配置错误')
-    }
-    postData[jsonNameConfig.pageIDName] = pageID
-    postData[jsonNameConfig.pageSizeName] = pageSize
-    return postData
+  /**
+   * 获取对象属性，支持嵌套获取 getProperty(window, 'location.href')
+   */
+  function getProperty(obj, field) {
+    if (!obj) return obj
+
+    field = field || String(field)
+    var fields = field.split('.')
+
+    return fields.reduce(function(prev, current) {
+      return prev[current]
+    }, obj)
   }
 
   // 封装统一的ajaxError对象
@@ -58,9 +54,12 @@ __export__;
     if (xhr.responseJSON)
       return xhr.responseJSON
 
+    var text = xhr.responseText.length > 64 ? '<span>' + MSG.REQ_ERROR +
+      '</span>' : xhr.responseText
+
     return {
       statusCode: xhr.status,
-      content: xhr.responseText + xhr.statusText,
+      content: text + xhr.statusText,
       id: Date.now()
     }
   }
@@ -72,155 +71,128 @@ __export__;
     }
   }
 
-  /**
-   * 是否对表格数据进行补齐
-   * 比如只有三条数据，则剩余的使用空行补齐
-   */
-  function normalizeDatalist(app, datalist, pageSize) {
-    datalist = datalist || []
-
-    if (!app.get('padding') || datalist.length === 0 || datalist.length === pageSize) {
-      app.set('datalist', datalist)
-      return
-    }
-
-    _.times(pageSize - datalist.length, function () {
-      datalist.push({isPadding: true})
-    })
-    app.set('datalist', datalist)
-  }
-
-  // 表头排序
-  var sortOrder = {}
-
-  // 存储排序字段的降序升序信息
-  var setOrderClass = function (app, field) {
-    var lastOrderASC = sortOrder[field] === 'ASC'
-    // 设置表头样式
-    for (var key in sortOrder) {
-      app.set('order.' + key, '')
-    }
-    app.set('order.' + field, lastOrderASC ? 'sort-desc' : 'sort-asc')
-    sortOrder[field] = lastOrderASC ? 'DESC' : 'ASC'
-  }
-
-  // 设置固定列
-  function setFixedCols(app) {
-    var options = app.get('options')
-    var selector = 'thead>tr, tbody>tr'
-
-    if (options.leftColumns > 0) {
-      $(app.find('.rleftcols')).find(selector).each(function () {
-        $('*:lt(' + options.leftColumns + ')', this).show()
-      })
-    }
-
-    if (options.rightColumns > 0) {
-      $(app.find('.rrightcols')).find(selector).each(function () {
-        $('*:gt(' + (-1 * options.rightColumns - 1) + ')', this).show()
-      })
-    }
-  }
-
-  // 获取表格数据相关信息（本页总和、平均，全部总和、平均）
-  // 服务端分页获取中位数和全部总和需要服务端返回数据
-  function compute(field, computeType, isFloat) {
-    var app = this
-    var options = app.get('options')
-    var ret = 0
-    var avg = 0
-
-    // 本页数据求和、求平均
-    if (computeType === 'avg' || computeType === 'sum') {
-      var datalist = app.get('datalist') || []
-      _.each(datalist, function (item) {
-        ret += $.isNumeric(item[field]) ? item[field] : 0
-      })
-
-      if (computeType === 'avg') {
-        avg = ret / datalist.length
-        return isFloat ? avg : Math.floor(avg)
-      }
-
-      return ret
-    }
-
-    if (!options.serverPagination) {
-      var datasource = app.get('datasource') || []
-
-      if (computeType === 'sumTotal') {
-        _.each(datasource, function (item) {
-          ret += $.isNumeric(item[field]) ? item[field] : 0
-        })
-        return ret
-      }
-
-      // 全部数据的中位数
-      var len = datasource.length
-      if (len === 0) return 0
-
-      // 先将数据全部排序
-      datasource = _.clone(datasource, true).sort(function (a, b) {
-        return a[field] < b[field] ? -1 : 1
-      })
-
-      if (len % 2 === 1) {
-        return datasource[Math.floor(len / 2)][field]
-      } else {
-        avg = (datasource[len / 2][field] + datasource[(len / 2) - 1][field]) / 2
-        return isFloat ? avg : Math.floor(avg)
-      }
-    }
-
-    // TODO服务端需要返回一个属性计算每个字段的总和
-  }
-
   // 开始渲染表格，设置关键数据源
-  function renderClientPagination(app, pager, json) {
-    pager.set('total', json.length)
-
-    // 保存一份源数据
-    app.set('datasource', json)
-
-    // 页面跳转
-    app.off('pager.goto').on('pager.goto', function (e) {
-      var pageid = pager.get('pageid')
-      var pagesize = pager.get('pagesize')
+  function renderClientPagination(app, data, errorHandler) {
+    /*
+     * 不依赖于第一次请求成功
+     * 后续修改数据源也可以正常工作
+     * 这里要放在最前面，如果直接设置数据源需要先绑定事件
+     */
+    app.on('request', function datagridPageChange(e, info) {
       var datasource = app.get('datasource')
-      pager.set('total', datasource.length)
-      normalizeDatalist(app, datasource.slice((pageid - 1) * pagesize, pageid * pagesize), pagesize)
-      setFixedCols(app)
+      // 可能请求还没有加载完成
+      if (!datasource) return
+
+      var pageid = info.pageid
+      var pagesize = info.pagesize
+      var start = (pageid - 1) * pagesize
+      var end = start + pagesize
+      var datalist = datasource.slice(start, end)
+
+      app.set('datalist', datalist)
+
+      // TODO 直接设置datasource不会触发这里
+      app.fire('pagechange', null, info)
     })
 
-    // 页码大小改变
-    app.off('pager.pageSizeChange').on('pager.pageSizeChange', function (e, pagesize) {
-      var datasource = app.get('datasource') || []
-      var pageid = pager.get('pageid')
-      normalizeDatalist(app, datasource.slice((pageid - 1) * pagesize, pageid * pagesize), pagesize)
-      setFixedCols(app)
-    })
+    /*
+     * 客户端分页有两种情况：
+     * 1)直接请求一次；
+     * 2)直接设置数据源
+     */
+    if (data.url) {
+      var url = tryExec(data.url)
+      var params = tryExec(data.params) || {}
 
-    app.off('sortBy').on('sortBy', function (e, field) {
-      // todo 数字字符排序
-      var isASC = sortOrder[field] === 'ASC'
-      app.get('datasource').sort(function (a, b) {
-        if (isASC) {
-          return Utils.getProperty(a, field) < Utils.getProperty(b, field) ? -1 : 1
-        } else {
-          return Utils.getProperty(a, field) < Utils.getProperty(b, field) ? 1 : -1
-        }
+      app.set('isLoading', true)
+      $.post(url, params).then(function requestData(json) {
+        var datasource = json.content || []
+        app.set('datasource', datasource)
+        app.set('ajaxError', null)
+        /**
+         * 这里的设置要放在最后，如果放在前面，触发的事件无法获取datasource
+         */
+        app.set('total', datasource.length)
+      }).fail(errorHandler).always(function always() {
+        app.set('isLoading', false)
       })
+    } else if (data.datasource) {
+      app.set('ajaxError', null)
+      app.set('isLoading', false)
+      app.set('total', data.datasource.length)
+    } else {
+      throw new Error(MSG.MISSING_CLIENT_OPTS)
+    }
 
-      setOrderClass(app, field)
-      pager.fire('goto', {}, 1, true)
+    /**
+     * 排序只能根据一个字段排
+     */
+    app.on('sortBy', function datagridSort(e, field) {
+      var datasource = app.get('datasource')
+      var currentField = app.get('sortField')
+      var sortOrder = app.get('sortOrder')
+      if (currentField === field) {
+        app.set('sortOrder', !sortOrder || sortOrder === 'asc' ? 'desc' : 'asc')
+      } else {
+        app.set('sortField', field)
+        app.set('sortOrder', 'desc')
+      }
 
-      // TODO 如果加了固定列的话要操作另外的表格
-      $(e.node).parent().children().removeClass('sort-asc sort-desc')
-      $(e.node).addClass(app.get('order')[field])
+      var sortVal = app.get('sortOrder') === 'desc' ? -1 : 1
+      var sorted = _.sortBy(datasource, function(item) {
+        // 返回正数升序
+        return getProperty(item, field) * sortVal
+      })
+      app.set('datasource', sorted)
+
+      /**
+       * 如果当前为第一页需要主动触发
+       */
+      if (app.get('pageid') === 1) {
+        app.fire('request', null, {
+          pageid: 1,
+          pagesize: app.get('pagesize')
+        })
+      } else {
+        app.set('pageid', 1)
+      }
     })
+  }
 
-    pager.fire('goto', {}, pager.get('pageid') || 1, true)
-    setFixedCols(app)
+  function renderSeverPagination(app, data, errorHandler) {
+    function requestByPage(pageid, pagesize, callback) {
+      var url = tryExec(data.url)
+      var params = tryExec(data.params) || {}
+      params.pageID = pageid
+      params.pageSize = pagesize
+
+      app.set('isLoading', true)
+      $.post(url, params).then(function requestPageData(json) {
+        app.set('datalist', json.content || [])
+        app.set('datasource', json.content || [])
+        app.set('ajaxError', null)
+
+        app.fire('pagechange', null, {
+          pageid: pageid,
+          pagesize: pagesize
+        })
+
+        callback && callback(json)
+      }).fail(errorHandler).always(function always() {
+        app.set('isLoading', false)
+      })
+    }
+
+    /*
+     * 先请求一次获取总条数然后绑定事件
+     */
+    requestByPage(data.pageid, data.pagesize, function(json) {
+      // ?? 这里是每一次都设置还是只设置一次
+      app.set('total', json.total)
+      app.on('request', function datagridPageChange(e, info) {
+        requestByPage(info.pageid, info.pagesize)
+      })
+    })
   }
 
   component.exports = {
@@ -246,158 +218,53 @@ __export__;
     },
     isolated: false,
     data: {
-      // 是否对表格数据进行补齐
-      padding: false,
-      compute: compute
-    },
-    oninit: function () {
-      var app = this
-      var pager = app.findComponent('pager')
-      var data = this.get()
-      var options = data.options
-      if (!options) return
-
-      for (var key in jsonNameConfig) {
-        options[key] && (jsonNameConfig[key] = options[key])
-      }
-
-      options.pageid = options.pageid || 1
-      // 设置pagesize
-      var sizes = options.sizes || '10,20,50'
-      options.pagesize = parseInt(sizes.toString().split(',')[0])
-
-      // 分页条配置
-      var pagerOptions = ['pageid', 'width', 'sizes', 'pagesize']
-      $.each(pagerOptions, function (i, field) {
-        options[field] && pager.set(field, options[field])
-      })
-
-      // 固定列配置
-      options.leftColumns = $.isNumeric(options.leftColumns) && options.leftColumns > 0 ? options.leftColumns : 0
-      options.rightColumns = $.isNumeric(options.rightColumns) && options.rightColumns > 0 ? options.rightColumns : 0
-
-      // ajax配置
-      if (options.ajaxUrl) {
-        var errorHandler = onAjaxError(app)
-        // 服务端分页
-        if (options.serverPagination) {
-          // 初始化排序信息
-          var orderInfo = data.orderInfo
-          if (orderInfo && orderInfo.defaults) {
-            app.set('sortID', orderInfo[orderInfo.defaults.field][orderInfo.defaults.order])
-            // 将当前排序信息存起来
-            app.set('orderInfo.current', {
-              field: orderInfo.defaults.field,
-              order: orderInfo.defaults.order
-            })
-          }
-
-          var requestByPage = function (fn) {
-            var options = app.get('options')
-            var pageSize = pager.get('pagesize')
-            var data = getParams(options.params, pager.get('pageid'), pageSize)
-
-            data.sortID = app.get('sortID') || 0
-
-            $.post(options.ajaxUrl, data).then(function onSuccess(json) {
-              app.set('ajaxError', null)
-              var field = getJsonField(app)
-              // 后台分页返回的数据全部在content里面
-              json = json || {}
-              json = json[field]
-              // 服务端分页需要区分第一次请求和后续请求，第一次请求之后立马设置总条数和源数据
-              pager.set('total', json[jsonNameConfig.totalRecordName] || 0)
-              pager.fire('refresh', {})
-              app.set('totalRecord', json[jsonNameConfig.totalRecordName] || 0)
-
-              normalizeDatalist(app, json[field] || [], pageSize)
-
-              setFixedCols(app)
-
-              AsyncRender.done(app, fn, [null, json])
-            }).fail(function onFail(xhr) {
-              errorHandler(xhr)
-
-              AsyncRender.done(app, fn, [xhr])
-            })
-          }
-
-          var invokeTimes = 0
-          app.on('request', function (e, pageid, callback) {
-            // 在第一次请求完毕之后才绑定事件，不然会执行两次(pager的observer导致)
-            if (invokeTimes < 1) {
-              app.on('pager.goto', function (e, pageid) {
-                app.set('options.pageid', pageid || 1)
-                app.findComponent('pager').set('pageid', pageid || 1)
-                requestByPage(callback)
-              })
-
-              app.on('sortBy', function (e, field) {
-                var orderInfo = app.get('orderInfo')
-                if (!orderInfo) throw new Error('datagrid.orderInfo must be set.')
-
-                var current = orderInfo.current
-                var orderBy
-                if (current && current.field === field) {
-                  // 如果上次排序也是自身
-                  orderBy = current.order === 'desc' ? 'asc' : 'desc'
-                  app.set('sortID', orderInfo[field][orderBy])
-                  app.set('orderInfo.current.order', orderBy)
-                } else {
-                  // 如果上次不是自身则使用降序排列
-                  orderBy = 'desc'
-                  app.set('sortID', orderInfo[field][orderBy])
-                  app.set('orderInfo.current', {
-                    field: field, order: orderBy
-                  })
-                }
-
-                $(e.node).parents('thead').find('.datagrid-sort').removeClass('sort-asc sort-desc')
-                $(e.node).addClass('sort-' + orderBy)
-
-                pager.fire('goto', {}, app.get('options.pageid'), true)
-              })
-              invokeTimes += 1
-            }
-
-            app.fire('pager.goto', e, pageid, true)
-          })
-
-          return
+      isLoading: true,
+      ajaxError: null,
+      // 当页数据
+      datalist: [],
+      // 全部数据
+      datasource: [],
+      // 数据条数
+      total: 0,
+      // 排序字段信息
+      sortField: '',
+      // 默认排序信息
+      sortOrder: '',
+      // 获取字段当前排序顺序asc, desc
+      getSortClass: function(field) {
+        if (this.get('sortField') === field) {
+          return 'sortable-' + this.get('sortOrder')
         }
 
-        // 暴漏给外部调用
-        app.on('request', function (e, pageid, callback) {
-          var options = app.get('options')
-          // 前端分页
-          var data = getParams(options.params, pageid || options.pageid, options.pagesize || 10)
+        return 'sortable'
+      }
+    },
+    onrender: function () {
+      var app = this
+      var data = this.get()
+      var errorHandler = onAjaxError(app)
 
-          $.post(options.ajaxUrl, data).then(function onSuccess(json) {
-            app.set('ajaxError', null)
+      if (!data.pageid) {
+        app.set('pageid', 1)
+      }
 
-            var field = getJsonField(app)
-            renderClientPagination(app, pager, json[field])
+      if (!data.pagesize) {
+        app.set('pagesize', 10)
+      }
 
-            AsyncRender.done(app, callback, [null, json])
-          }).fail(function onFail(xhr) {
-            errorHandler(xhr)
-
-            AsyncRender.done(app, callback, [xhr])
-          })
-        })
-
+      // 客户端分页
+      if (!data.server) {
+        renderClientPagination(app, data, errorHandler)
         return
       }
 
-      // 直接传入数组数据
-      if (options.hasOwnProperty('datalist')) {
-        options.serverPagination = false
-
-        renderClientPagination(app, pager, options.datalist || [])
+      // 服务端分页
+      if (data.url) {
+        renderSeverPagination(app, data, errorHandler)
         return
       }
 
-      throw new Error('缺少配置：ajaxUrl或datalist')
+      throw new Error(MSG.MISSING_SERVER_OPTS)
     }
   }
 
