@@ -58,6 +58,13 @@ total:{{total}}
 
 <datagrid datasource="{{datasource}}">
   <table class="table table-bordered">
+    <thead>
+    <tr>
+      <td class="{{getSortClass('x')}}" on-click="sortBy:x">x</td>
+      <td class="{{getSortClass('y')}}" on-click="sortBy:y">y</td>
+      <td class="{{getSortClass('z')}}" on-click="sortBy:z">z</td>
+    </tr>
+    </thead>`
     {{#datalist}}
       <tr>
         <td>{{x}}</td>

@@ -24,8 +24,8 @@ define([
       _.times(33, function(i) {
         datasource.push({
           x: i + 1,
-          y: i + 2,
-          z: i + 3
+          y: Math.random() * 100,
+          z: Math.random() * 100
         })
       })
 
