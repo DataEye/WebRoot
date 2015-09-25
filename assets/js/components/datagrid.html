@@ -101,6 +101,28 @@
   // 开始渲染表格，设置关键数据源
   function renderClientPagination(app, data, errorHandler) {
     /*
+     * 不依赖于第一次请求成功
+     * 后续修改数据源也可以正常工作
+     * 这里要放在最前面，如果直接设置数据源需要先绑定事件
+     */
+    app.on('request', function datagridPageChange(e, info) {
+      var datasource = app.get('datasource')
+      // 可能请求还没有加载完成
+      if (!datasource) return
+
+      var pageid = info.pageid
+      var pagesize = info.pagesize
+      var start = (pageid - 1) * pagesize
+      var end = start + pagesize
+      var datalist = datasource.slice(start, end)
+
+      app.set('datalist', datalist)
+
+      // TODO 直接设置datasource不会触发这里
+      app.fire('pagechange', null, info)
+    })
+
+    /*
      * 客户端分页有两种情况：
      * 1)直接请求一次；
      * 2)直接设置数据源
@@ -118,7 +140,6 @@
          * 这里的设置要放在最后，如果放在前面，触发的事件无法获取datasource
          */
         app.set('total', datasource.length)
-
       }).fail(errorHandler).always(function always() {
         app.set('isLoading', false)
       })
@@ -129,24 +150,6 @@
     } else {
       throw new Error(MSG.MISSING_CLIENT_OPTS)
     }
-
-    /*
-     * 这里提取到外部，不依赖于第一次请求成功
-     * 后续修改数据源也可以正常工作
-     */
-    app.on('request', function datagridPageChange(e, info) {
-      var datasource = app.get('datasource')
-      // 可能请求还没有加载完成
-      if (!datasource) return
-
-      var pageid = info.pageid
-      var pagesize = info.pagesize
-      var start = (pageid - 1) * pagesize
-      var end = start + pagesize
-      var datalist = datasource.slice(start, end)
-
-      app.set('datalist', datalist)
-    })
 
     /**
      * 排序只能根据一个字段排
@@ -195,6 +198,11 @@
         app.set('datalist', json.content || [])
         app.set('datasource', json.content || [])
         app.set('ajaxError', null)
+
+        app.fire('pagechange', null, {
+          pageid: pageid,
+          pagesize: pagesize
+        })
 
         callback && callback(json)
       }).fail(errorHandler).always(function always() {

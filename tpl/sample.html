@@ -25,25 +25,25 @@ total:{{total}}
 
 <hr>
 
-<datagrid url="./test.json" server="true">
-  <table class="table table-bordered">
-    {{#datalist}}
-      <tr>
-        <td>{{x}}</td>
-        <td>{{y}}</td>
-        <td>{{z}}</td>
-      </tr>
-    {{/datalist}}
-  </table>
-</datagrid>
+<!--<datagrid url="./test.json" server="true">-->
+  <!--<table class="table table-bordered">-->
+    <!--{{#datalist}}-->
+      <!--<tr>-->
+        <!--<td>{{x}}</td>-->
+        <!--<td>{{y}}</td>-->
+        <!--<td>{{z}}</td>-->
+      <!--</tr>-->
+    <!--{{/datalist}}-->
+  <!--</table>-->
+<!--</datagrid>-->
 
-<datagrid url="./test.json">
+<datagrid url="./test.json" on-pagechange="log">
   <table class="table table-bordered">
     <thead>
     <tr>
-      <td class="{{getSortClass('x')}}" on-click="sortBy:x">x</td>
-      <td class="{{getSortClass('y')}}" on-click="sortBy:y">y</td>
-      <td class="{{getSortClass('z')}}" on-click="sortBy:z">z</td>
+      <td class="{{getSortClass('x')}}" on-click="sortBy:x">x1</td>
+      <td class="{{getSortClass('y')}}" on-click="sortBy:y">y1</td>
+      <td class="{{getSortClass('z')}}" on-click="sortBy:z">z1</td>
     </tr>
     </thead>
     {{#datalist}}
@@ -56,7 +56,7 @@ total:{{total}}
   </table>
 </datagrid>
 
-<datagrid datasource="{{datasource}}">
+<datagrid datasource="{{datasource}}" on-pagechange="log">
   <table class="table table-bordered">
     <thead>
     <tr>
@@ -64,7 +64,7 @@ total:{{total}}
       <td class="{{getSortClass('y')}}" on-click="sortBy:y">y</td>
       <td class="{{getSortClass('z')}}" on-click="sortBy:z">z</td>
     </tr>
-    </thead>`
+    </thead>
     {{#datalist}}
       <tr>
         <td>{{x}}</td>

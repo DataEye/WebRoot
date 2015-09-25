@@ -78,6 +78,11 @@ define([
         console.log(e.node.value)
       })
 
+      app.on('log', function(e, info) {
+        debugger
+        console.log(info)
+      })
+
       app.fire('selectChange', null, 20)
     },
     destroy: function() {
