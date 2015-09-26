@@ -35,7 +35,8 @@
     </div>
     {{/if}}
 
-    {{#if !ajaxError && !datalist}}
+    <!--loading时不展示暂无数据，初次加载时必要-->
+    {{#if !ajaxError && !datalist && !isLoading}}
     <div class="rempty text-center">
       <i class="fa fa-exclamation-circle"></i>
 
@@ -50,6 +51,15 @@
   {{/if}}
 </div>
 <script>
+  /**
+   * 服务端分页
+   * <datagird url="" params="" server="true"  on-pagechange="" on-requestend="" />
+   * 客户端分页
+   * <datagird url="" params="" on-pagechange="" on-requestend="" />
+   * 直接设置数据源
+   * 已知bug 不会触发pagechange
+   * <datagird datasource="" on-pagechange="" />
+   */
   var $ = require('jquery')
   var _ = require('lodash')
   var MSG = {
@@ -136,6 +146,9 @@
         var datasource = json.content || []
         app.set('datasource', datasource)
         app.set('ajaxError', null)
+
+        // 数据请求成功回调
+        app.fire('requestend', null, datasource)
         /**
          * 这里的设置要放在最后，如果放在前面，触发的事件无法获取datasource
          */
@@ -195,10 +208,12 @@
 
       app.set('isLoading', true)
       $.post(url, params).then(function requestPageData(json) {
-        app.set('datalist', json.content || [])
-        app.set('datasource', json.content || [])
+        var datasource = json.content || []
+        app.set('datalist', datasource)
+        app.set('datasource', datasource)
         app.set('ajaxError', null)
 
+        app.fire('requestend', null, datasource)
         app.fire('pagechange', null, {
           pageid: pageid,
           pagesize: pagesize

@@ -25,19 +25,19 @@ total:{{total}}
 
 <hr>
 
-<!--<datagrid url="./test.json" server="true">-->
-  <!--<table class="table table-bordered">-->
-    <!--{{#datalist}}-->
-      <!--<tr>-->
-        <!--<td>{{x}}</td>-->
-        <!--<td>{{y}}</td>-->
-        <!--<td>{{z}}</td>-->
-      <!--</tr>-->
-    <!--{{/datalist}}-->
-  <!--</table>-->
-<!--</datagrid>-->
+<datagrid url="./test.json" server="true"  on-pagechange="log1" on-requestend="end1">
+  <table class="table table-bordered">
+    {{#datalist}}
+      <tr>
+        <td>{{x}}</td>
+        <td>{{y}}</td>
+        <td>{{z}}</td>
+      </tr>
+    {{/datalist}}
+  </table>
+</datagrid>
 
-<datagrid url="./test.json" on-pagechange="log">
+<datagrid url="./test.json" on-pagechange="log2" on-requestend="end2">
   <table class="table table-bordered">
     <thead>
     <tr>
@@ -56,7 +56,7 @@ total:{{total}}
   </table>
 </datagrid>
 
-<datagrid datasource="{{datasource}}" on-pagechange="log">
+<datagrid datasource="{{datasource}}">
   <table class="table table-bordered">
     <thead>
     <tr>

@@ -78,9 +78,20 @@ define([
         console.log(e.node.value)
       })
 
-      app.on('log', function(e, info) {
-        debugger
-        console.log(info)
+      app.on('log1', function(e, info) {
+        console.log('log1')
+      })
+
+      app.on('end1', function(e, info) {
+        console.log('end1')
+      })
+
+      app.on('log2', function(e, info) {
+        console.log('log2')
+      })
+
+      app.on('end2', function(e, info) {
+        console.log('end2')
       })
 
       app.fire('selectChange', null, 20)
