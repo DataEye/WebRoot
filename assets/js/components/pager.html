@@ -3,6 +3,38 @@
 
 {{^hidden}}
 <div class="pager">
+  <!-- 简单模式，只有翻页按钮 -->
+  {{#if simple}}
+  <div class="rpager-pagination-simple pull-left">
+    <ul class="pagination">
+      {{#if pageid == 1}}
+      <li class="prev pull-left disabled">
+        <i class="fa fa-caret-left"></i>
+      </li>
+      {{/if}}
+
+      {{#if pageid != 1}}
+      <li class="prev pull-left" on-click="goto:{{pageid - 1}}">
+        <i class="fa fa-caret-left"></i>
+      </li>
+      {{/if}}
+
+      <li class="pull-left">{{pageid}}/{{totalPage}}</li>
+
+      {{#if pageid == totalPage}}
+      <li class="next pull-left disabled">
+        <i class="fa fa-caret-right"></i>
+      </li>
+      {{/if}}
+
+      {{#if pageid != totalPage}}
+      <li class="next pull-left" on-click="goto:{{pageid + 1}}">
+        <i class="fa fa-caret-right"></i>
+      </li>
+      {{/if}}
+    </ul>
+  </div>
+  {{else}}
   <div class="pager-switch pull-left">
     <span>每页显示</span>
     {{#if sizes && pagesize}}
@@ -44,11 +76,15 @@
       </li>
     </ul>
   </div>
-
+  {{/if}}
   <div style="clear: both;"></div>
 </div>
 {{/hidden}}
 <script>
+  /**
+   * <pager pageid="{{pageid}}" pagesize="{{pagesize}}" total="{{total}}" on-pagechange="request" />
+   * <pager pageid="{{pageid}}" pagesize="{{pagesize}}" total="{{total}}" simple="true" />
+   */
   var _ = require('lodash')
   //xxx
   component.exports = {
@@ -66,8 +102,9 @@
       totalPage: function() {
         var total = this.get('total')
         var size = this.get('pagesize')
+        var totalPage = Math.ceil(total / size)
 
-        return size > 0 && total > 0 && Math.ceil(total / size)
+        return size > 0 && total > 0 && totalPage ? totalPage : 0
       }
     },
     onrender: function() {
@@ -110,19 +147,20 @@
       function onPageChange(pageid) {
         var total = app.get('total')
         var width = app.get('width')
-        var totalPage = app.get('totalPage')
+        var totalPage = Math.ceil(total / app.get('pagesize'))
         var start = Math.max(1, pageid - width)
         var end = Math.min(pageid + width, totalPage)
 
         var items = []
-        for (var i = start; i <= end; i++) {
+        var i
+        for (i = start; i <= end; i++) {
           items.push(i)
         }
 
         var paddingLen = width * 2 + 1 - items.length
         // 边界处理
         if (paddingLen > 0) {
-          for (var i = 1; i <= paddingLen; i++) {
+          for (i = 1; i <= paddingLen; i++) {
             // 尾部
             if (start === 1 && i + end <= totalPage) {
               items.push(i + end)
