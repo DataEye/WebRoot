@@ -9,25 +9,43 @@
  */
 define([
   'jquery', 'ractive', 'text!tpl/sample.html', 'lodash',
+  'jquery.mockjax',
   'rvc!components/dropdown', 'rvc!components/pager', 'rvc!components/text-input',
   'rvc!components/datagrid'
-], function($, Ractive, tpl, _, Dropdown, Pager, TextInput, DataGrid) {
+], function($, Ractive, tpl, _, mock, Dropdown, Pager, TextInput, DataGrid) {
   var app;
+  var datasource = []
+  _.times(33, function(i) {
+    datasource.push({
+      x: i + 1,
+      y: Math.random() * 100,
+      z: Math.random() * 100
+    })
+  })
+
+  $.mockjax({
+    url: './server.json',
+    contentType: 'application/json',
+    responseText: JSON.stringify({
+      total: 12,
+      content: datasource.slice(0, 10)
+    })
+  })
+
+  $.mockjax({
+    url: './client.json',
+    contentType: 'application/json',
+    responseText: JSON.stringify({
+      content: datasource
+    })
+  })
+
   return {
     render: function() {
       Ractive.components.dropdown = Dropdown
       Ractive.components.pager = Pager
       Ractive.components.textinput = TextInput
       Ractive.components.datagrid = DataGrid
-
-      var datasource = []
-      _.times(33, function(i) {
-        datasource.push({
-          x: i + 1,
-          y: Math.random() * 100,
-          z: Math.random() * 100
-        })
-      })
 
       app = new Ractive({
         template: tpl,
