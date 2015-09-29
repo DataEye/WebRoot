@@ -57,7 +57,20 @@ function getRequireJSConfig() {
 
     // build预处理
     onBuildRead: function (moduleName, path, contents) {
+      if (moduleName === 'jquery.mockjax') {
+        return `
+          define(['jquery'], function($) {
+            $.mockjax = function() {
+              console.warn('不要在生产环境使用$.mockjax，请移除相关代码')
+            }
+
+            return $.mockjax
+          })
+        `
+      }
+
       console.log(`读取:${moduleName}`)
+
       /**
        * 直接替换生成环境的引入方式
        * 引用components下的模块
@@ -111,6 +124,7 @@ function getRequireJSConfig() {
           'jquery',
           'jquery.cookie',
           'jquery.amaran',
+          'jquery.mockjax',
           'jquery-scrolltofixed',
           'query-string',
           'store',
