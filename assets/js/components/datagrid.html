@@ -108,6 +108,15 @@
     }
   }
 
+  function normalizeDataSource(app, json) {
+    var transform = app.get('transform')
+    if ($.isFunction(transform)) {
+      return transform(json)
+    }
+
+    return json
+  }
+
   // 开始渲染表格，设置关键数据源
   function renderClientPagination(app, data, errorHandler) {
     /*
@@ -143,6 +152,7 @@
 
       app.set('isLoading', true)
       $.post(url, params).then(function requestData(json) {
+        json = normalizeDataSource(app, json)
         var datasource = json.content || []
         app.set('datasource', datasource)
         app.set('ajaxError', null)
@@ -208,6 +218,7 @@
 
       app.set('isLoading', true)
       $.post(url, params).then(function requestPageData(json) {
+        json = normalizeDataSource(app, json)
         var datasource = json.content || []
         app.set('datalist', datasource)
         app.set('datasource', datasource)
@@ -252,9 +263,8 @@
           }
         }
 
-        // 同步更新pager的total
-        var pager = app.findComponent('pager')
-        pager.subtract('total')
+        // TODO 这里会触发pagechange
+        app.subtract('total')
         return true
       }
     },
@@ -270,7 +280,7 @@
       total: 0,
       // 排序字段信息
       sortField: '',
-      // 默认排序信息
+      // 排序信息
       sortOrder: '',
       // 获取字段当前排序顺序asc, desc
       getSortClass: function(field) {
