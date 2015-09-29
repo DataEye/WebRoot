@@ -108,6 +108,11 @@
     }
   }
 
+  /*
+   * 规范化数据返回格式
+   * json.name 标题信息
+   * json.content 数据集
+   */
   function normalizeDataSource(app, json) {
     var transform = app.get('transform')
     if ($.isFunction(transform)) {
@@ -115,6 +120,21 @@
     }
 
     return json
+  }
+
+  /*
+   * 保存相关标题信息
+   */
+  function saveTitleInfo(app, json) {
+    if (!json.name) return
+
+    var sortedTitles = _.keys(json.name).sort().map(function(k) {
+      return {
+        label: k, value: json.name[k]
+      }
+    })
+    app.set('datatitle', json.name)
+    app.set('sortedTitles', sortedTitles)
   }
 
   // 开始渲染表格，设置关键数据源
@@ -137,7 +157,7 @@
 
       app.set('datalist', datalist)
 
-      // TODO 直接设置datasource不会触发这里
+      // FIXME 直接设置datasource不会触发这里
       app.fire('pagechange', null, info)
     })
 
@@ -154,8 +174,12 @@
       $.post(url, params).then(function requestData(json) {
         json = normalizeDataSource(app, json)
         var datasource = json.content || []
+        // 原始数据，用于搜索等
+        app.set('json', datasource)
         app.set('datasource', datasource)
         app.set('ajaxError', null)
+
+        saveTitleInfo(app, json)
 
         // 数据请求成功回调
         app.fire('requestend', null, datasource)
@@ -240,8 +264,11 @@
      * 先请求一次获取总条数然后绑定事件
      */
     requestByPage(data.pageid, data.pagesize, function(json) {
-      // ?? 这里是每一次都设置还是只设置一次
+      // 标题信息只需要保存一次
+      saveTitleInfo(app, json)
+
       app.set('total', json.total)
+
       app.on('request', function datagridPageChange(e, info) {
         requestByPage(info.pageid, info.pagesize)
       })
