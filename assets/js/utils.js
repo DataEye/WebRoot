@@ -130,7 +130,6 @@ define([
 		var resJSon = xhr.responseJSON
 		// 如果服务器错误没有处理，不展示responseText（内容可能太多，包含html）
 		var msg = resJSon ? resJSon.msg : (xhr.status + ':' + xhr.statusText)
-		var readyState = xhr.readyState
 
 		// 第一种是客户端网络连接断开，statusText = error
 		// 第二种是程序主动断掉 statusText = abort
@@ -175,7 +174,7 @@ define([
 	window.formatPercentage = function(num) {
 		return numeral(num).format('00.00%')
 	}
-	
+
 	//货币符号
 	window.formatCurrency = function(num, symbol){
 		var str = '￥' + num
@@ -184,26 +183,26 @@ define([
 		}
 		return str
 	}
-	
+
 	// 格式化百分比
 	window.formatForPercentage = function(num) {
 		return numeral(num).format('00.00%')
 	}
-  
+
 	// 格式化数字
 	window.formatNumber = function(num) {
 		return numeral(num).format('0,0')
 	}
-  
+
   // 格式化货币金额
 	window.formatCurrency = function(num) {
 		return numeral(num).format('0,0.00')
 	}
-	
+
 	window.formatShortDate = function(str, format) {
 		return moment(String(str), 'YYYYMMDD').format(format ? format : 'MM/DD')
 	}
-	
+
 	window.formatShortTimePeriod  = function(num){
 		var str = num < 1000 ? '201501010' + num : '20150101' + String(num)
 		var ms = moment(str , 'YYYYMMDDhhmm').toDate().getTime()
@@ -211,7 +210,7 @@ define([
 		var end = moment(ms + 5*60*1000).format('HH:mm')
 		return start + '-' + end
 	}
-	
+
 	// 默认时间设置
 	window.defaultTimeSettings = (function() {
 		var today = moment().format('YYYY-MM-DD')
@@ -222,7 +221,7 @@ define([
 			dMax: today,
 			dMin: moment().add(-3, 'month').format('YYYY-MM-DD')
 		}
-	})()	
+	})()
 
 	// 获取指标说明的相关配置
 	window.getIndexInfo = function(arr) {
@@ -283,6 +282,21 @@ define([
 		getProperty: window.getProperty
 	}, window.defaultTimeSettings)
 
+	window.wrapError = function wrapError(xhr, defaultMsg) {
+    if (xhr.responseJSON)
+      return xhr.responseJSON
+
+    defaultMsg = defaultMsg || ''
+    var text = xhr.responseText.length > 64 ? '<span>' + defaultMsg +
+      '</span>' : xhr.responseText
+
+    return {
+      statusCode: xhr.status,
+      content: text + xhr.statusText,
+      id: Date.now()
+    }
+  }
+
 	/* 行首为+-/[(时加分号 */
 
 	/**
@@ -296,59 +310,6 @@ define([
 		// xhr连接池
 		var xhrPool = []
 
-		/**
-		 * 存储每个ajax请求的耗时，用于监控和分析
-		 */
-		$.ajaxPrefilter(function(options, originalOptions, jqXHR) {
-			jqXHR.startTime = Date.now()
-		})
-
-		/**
-		 * 记录参数和习惯数据
-		 */
-		function restoreResponse(jqXHR, options) {
-			/**
-			 * abort的请求忽略掉
-			 * 跨域的请求忽略掉
-			 */
-			if (jqXHR.statusText === 'abort' || options.crossDomain)
-				return
-
-			var elapsed = jqXHR.endTime - jqXHR.startTime
-			var serverTime = new Date(jqXHR.getResponseHeader('Date'))
-
-			delete jqXHR.endTime
-			delete jqXHR.startTime
-
-			var max = 5, key = 'res_info_list'
-			var list = Store.get(key)
-
-			list = list ? JSON.parse(list) : []
-			/**
-			 * 记录项目：
-			 * 1）接口地址
-			 * 2）全部参数
-			 * 3）http状态码
-			 * 4）耗时
-			 * 5）服务端响应时间
-			 */
-			list.push({
-				url: options.url,
-				data: options.data || '',
-				status: jqXHR.status,
-				elapsed: elapsed,
-				serverTime: serverTime.getTime && serverTime.getTime()
-			})
-
-			if (list.length >= max) {
-				Store.remove(key)
-				OSS.send(JSON.stringify(list), '_DESelf_AJAX')
-				return
-			}
-
-			Store.set(key, JSON.stringify(list))
-		}
-
 		$.ajaxSetup({
 			beforeSend: function(jqXHR, options) {
 				// 在url或者参数中加入abortless中就不会加入pool
@@ -358,32 +319,20 @@ define([
 				}
 			},
 			complete: function(jqXHR) {
-//				jqXHR.endTime = Date.now()
-//
-//				// TODO 记录接口请求耗时
-//				// restoreResponse(jqXHR, this)
-//
-//				var i = xhrPool.indexOf(jqXHR)
-//				if (i > -1)
-//					xhrPool.splice(i, 1)
-//
-//				var responseJSON = jqXHR.responseJSON
-//				if (responseJSON) {
-//					// 401登录态过期，直接跳转
-//					if (responseJSON.statusCode == 401) {
-//						// 防止弹出多个弹出框
-//						$.abortAll()
-//						location.href = App.contextPath + '/'
-//						return
-//					}
-//
-//					// 418 表示没有操作权限，这里不需要做特殊处理
-//					var handler = window['418handler']
-//					if (responseJSON.statusCode == 418 && $.isFunction(handler)) {
-//						handler(jqXHR)
-//						return
-//					}
-//				}
+				var i = xhrPool.indexOf(jqXHR)
+				if (i > -1)
+					xhrPool.splice(i, 1)
+
+				var responseJSON = jqXHR.responseJSON
+				if (responseJSON) {
+					// 401登录态过期，直接跳转
+					if (responseJSON.statusCode === 401) {
+						// 防止弹出多个弹出框
+						$.abortAll()
+						location.href = App.contextPath + '/'
+						return
+					}
+				}
 			}
 		})
 

@@ -62,6 +62,7 @@
    */
   var $ = require('jquery')
   var _ = require('lodash')
+  var wrapError = require('utils').wrapError
   var MSG = {
     REQ_ERROR: '请求出错',
     MISSING_CLIENT_OPTS: '客户端分页需要配置请求url或者datasource',
@@ -86,25 +87,10 @@
     }, obj)
   }
 
-  // 封装统一的ajaxError对象
-  function wrapError(xhr) {
-    if (xhr.responseJSON)
-      return xhr.responseJSON
-
-    var text = xhr.responseText.length > 64 ? '<span>' + MSG.REQ_ERROR +
-      '</span>' : xhr.responseText
-
-    return {
-      statusCode: xhr.status,
-      content: text + xhr.statusText,
-      id: Date.now()
-    }
-  }
-
   // ajax请求统一处理，服务端分页需要在翻页时清空错误对象
   function onAjaxError(app) {
     return function (xhr) {
-      app.set('ajaxError', wrapError(xhr))
+      app.set('ajaxError', wrapError(xhr, MSG.REQ_ERROR))
     }
   }
 
