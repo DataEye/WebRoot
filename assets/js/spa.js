@@ -56,7 +56,7 @@ define(['jquery', 'router', 'query-string', 'utils'], function($, Router, queryS
      */
     $.abortAll()
 
-    var pageName = location.hash.slice(1)
+    var pageName = location.hash.slice(1).split('?')[0]
     var scriptName = pageName[0] === '/' ? pageName.slice(1) : pageName
     scriptName = 'app/' + scriptName.replace(/\//g, '-')
     require([scriptName], function(View) {
